@@ -13,3 +13,7 @@
 
 See https://github.com/FStarLang/FStar/wiki/Running-F%2A-from-a-docker-image
 for more guidance on Docker.
+
+## Connectivity Problems from inside Docker
+
+- [Check DNS settings](https://docs.docker.com/engine/install/linux-postinstall/#specify-dns-servers-for-docker)
