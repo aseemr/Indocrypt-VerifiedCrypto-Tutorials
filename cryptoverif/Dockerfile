@@ -4,12 +4,14 @@ LABEL maintainer="Benjamin Lipp <benjamin.lipp@inria.fr>"
 USER build
 WORKDIR /home/build
 
+RUN sudo apt -y install vim
+
 # Needed for the CryptoVerif build script to find ocamlyacc and ocamllex
 ENV PATH="/home/build/.opam/4.07.0/bin:${PATH}"
 
 # conf-m4 ocaml ocamlfind are already installed by the fstar Dockerfile
 # only needed to link extracted implementations
-RUN sudo apt install zlib1g-dev
+RUN sudo apt -y install zlib1g-dev
 RUN opam install -y cryptokit
 
 # The following block downloads and extracts a CryptoVerif release
@@ -35,3 +37,13 @@ ENV PATH="/home/build/cryptoverif/bin:${PATH}"
 ENV CRYPTOVERIF_HOME="/home/build/cryptoverif"
 
 WORKDIR /home/build
+
+# Install cryptoverif-mode for Emacs
+RUN cp cryptoverif/emacs/cryptoverif.el .emacs.d/
+ADD .emacs-cv .emacs-cv
+RUN cat .emacs-cv >> .emacs
+
+# CryptoVerif in Vim
+RUN curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+ADD .vimrc .vimrc
+RUN vim +PlugInstall +qall
