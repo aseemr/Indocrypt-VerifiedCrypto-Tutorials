@@ -1,0 +1,76 @@
+;; Global settings
+(setq inhibit-startup-message t) 
+(setq initial-scratch-message nil)
+
+(global-font-lock-mode t)
+
+(line-number-mode   t)
+(column-number-mode t)
+
+(global-visual-line-mode 1)
+
+(setq process-adaptive-read-buffering nil)
+(setq compilation-scroll-output t)
+
+(setq mouse-drag-copy-region t)
+
+(cua-mode t)
+(setq cua-auto-tabify-rectangles nil)
+(transient-mark-mode 1)
+(setq cua-keep-region-after-copy t)
+
+(global-set-key (kbd "C-s") 'save-buffer)
+(global-set-key (kbd "C-f") 'isearch-forward)
+(global-set-key (kbd "C-n") 'find-file)
+(global-set-key (kbd "C-o") 'find-file)
+
+;; Mouse scrolling in terminal emacs
+(xterm-mouse-mode 1)
+(global-set-key (kbd "<mouse-4>") 'scroll-down-line)
+(global-set-key (kbd "<mouse-5>") 'scroll-up-line)
+
+;; Restart xterm-mouse-mode on USR1
+(defun usr1-handler ()
+   (interactive)
+   (xterm-mouse-mode -1)
+   (xterm-mouse-mode  1))
+ (global-set-key [signal usr1] 'usr1-handler)
+
+;; auto indent
+(when (fboundp 'electric-indent-mode) (electric-indent-mode -1))
+
+;; Tabs
+(setq-default c-basic-offset 2)
+(setq-default tab-width 2)
+(setq-default indent-tabs-mode nil)
+
+;; Initialize MELPA
+(require 'package)
+(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
+(package-initialize)
+
+;; Opam
+(require 'opam)
+(opam-init)
+
+;; Proof-general
+(setq proof-splash-enable nil)
+(setq proof-colour-locked t)
+(setq proof-electric-terminator-enable nil)
+(setq proof-three-window-mode-policy 'hybrid)
+(setq overlay-arrow-string "")
+
+(add-hook 'coq-mode-hook #'company-coq-mode)
+
+(add-hook 'coq-mode-hook
+      (lambda () (add-to-list 'write-file-functions 'delete-trailing-whitespace)))
+
+(setq easycrypt-prog-name "~/easycrypt/bin/easycrypt")
+
+; (setq company-coq-features/prettify-symbols-in-terminals t)
+
+(custom-set-faces
+ '(proof-error-face ((t (:foreground "red" :weight bold))))
+ '(proof-locked-face ((t (:background "grey" :extend t))))
+ '(proof-queue-face ((t (:background "yellow" :extend t))))
+ '(proof-tactics-name-face ((t (:foreground "blue")))))
