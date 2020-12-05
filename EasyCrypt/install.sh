@@ -10,7 +10,7 @@ Z3SV=.d6df51951f4c
 function error { echo "$@" >&2; exit 1; }
 
 # --------------------------------------------------------------------
-# [ ! -d "${ROOT}" ] || error "Remove ${ROOT} first"
+[ ! -d "${ROOT}" ] || error "Remove ${ROOT} first"
 
 mkdir "${ROOT}"
 for i in etc bin; do mkdir "${ROOT}/$i"; done
