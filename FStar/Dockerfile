@@ -34,9 +34,14 @@ RUN ./everest --yes pull_projects
 
 ENV FSTAR_HOME=/home/vericrypt/everest/FStar
 ENV KREMLIN_HOME=/home/vericrypt/everest/kremlin
+ENV HACL_HOME=/home/vericrypt/everest/hacl_star
 
 RUN OTHERFLAGS='--admit_smt_queries true' ./everest -j 4 FStar make
 RUN OTHERFLAGS='--admit_smt_queries true' ./everest -j 4 kremlin make
+
+ENV PATH="/home/vericrypt/everest/FStar/bin:/home/vericrypt/everest/kremlin/:/home/vericrypt/everest/z3/bin:${PATH}"
+
+RUN OTHERFLAGS='--admit_smt_queries true' make -j 4 -C hacl-star/lib
 
 RUN sudo apt-get install -y emacs libglu1-mesa xfonts-terminus fonts-symbola
 
@@ -51,6 +56,6 @@ RUN emacs --batch \
 
 COPY --chown=vericrypt:vericrypt .emacs /home/vericrypt/.emacs
 
-ENV PATH="/home/vericrypt/everest/FStar/bin:/home/vericrypt/everest/kremlin/:${PATH}"
+ENV PATH="/home/vericrypt/everest/FStar/bin:/home/vericrypt/everest/kremlin/:/home/vericrypt/everest/z3/bin:${PATH}"
 
 WORKDIR /home/vericrypt/everest/FStar
