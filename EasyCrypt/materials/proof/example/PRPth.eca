@@ -1,0 +1,161 @@
+(*  
+    Formalization of Pseudorandom Permutation
+    and their relation.
+
+    Syntax and security.
+*)
+
+require import AllCore Int Distr FSet SmtMap Real.
+require import QCounter.
+require (****) PRFth RPth.
+
+
+clone include RPth.
+
+(* Syntax of the PRP *)
+type key.
+
+(* The following are the mimimum properties we require on
+   the distribution over keys for proofs to go through. *)
+
+(* We need to efficiently sample keys from some arbitrary
+   distribution *)
+op dkey : key distr.
+axiom dkey_ll : is_lossless dkey.
+
+(* This function will be assumed to be a PRP. 
+   Cloning this theory and replacing f with an arbitrary
+   operator gives us the assumption that that operator
+   is a PRP. *)
+op f : key -> input -> output.
+
+(* We will extend the definitions in the PRF theory
+   and prove a relation between the two primitives.
+   When cloning we can replace (<-) or create aliases
+   (=) for top level types. *)
+clone import PRFth as PRFt with
+   type key <- key,
+   op dkey <- dkey,
+   type input <- input,
+   type output <- output,
+   op f <- f,
+   op doutput <- doutput
+   (* Axioms in the cloned theory can be converted
+      into lemmas via proof. In this case we use the
+      top level axioms to discharge the cloned ones,
+      so we don't get redundant axioms. *)
+   proof *.
+
+realize doutput_ll by apply doutput_ll.
+realize doutput_uni by apply doutput_uni.
+realize doutput_full by apply doutput_full.
+realize dkey_ll by apply dkey_ll.  
+
+(* We have all the game definitions from PRFt, so we just need
+   a new real and ideal worlds *)
+ 
+
+module Real_PRP = Real_PRF.
+module Ideal_PRP = Ideal(RP).
+
+(* 
+ EasyCrypt does not currently give us a way to define 
+ advantage as a function over the reals. 
+ Instead we explicitly write claims as expressions over 
+ probabilities:
+
+ `| Pr[Real_Ideal(A, Real_PRP).main() @ &m : res ] - 
+           Pr[Real_Ideal(A, Ideal_PRP).main() @ &m ] |.
+*)
+
+(*************************************************************)
+(* PRF/PRP switching lemma using the core EC libraries       *)
+(*************************************************************)
+
+(* This library has a number of results and definitions which
+   are more general than this example, but we will use it to
+   derive what we need without much explanation. *)
+require (****) PRP.
+
+(* Maximal number of queries done by the adversary *)
+op q : {int | 0 <= q } as ge0_q.
+
+section.
+
+declare module A : Adv {RF, QCounter,RP}.
+axiom A_ll (O<:Orcl{A}): islossless O.f => islossless A(O).guess.
+
+local clone import PRP as PRPt with
+  type D <- output
+  proof *.
+
+local clone PRPt.RP as RPt with 
+  op dD <- doutput
+  proof *.
+realize dD_ll by apply doutput_ll.
+
+local clone import RPt.RP_RF as RP_RFt with 
+  op q <- q
+  proof *.
+realize ge0_q by apply ge0_q.
+realize dD_funi.
+proof. 
+  apply is_full_funiform.
+  + by apply doutput_full.
+  by apply doutput_uni.
+qed.
+import PRFi.
+
+local module D(O:Orcl) = {
+   proc distinguish = A(O).guess
+}.
+
+(* This lemma implies that assuming a query bound in our world implies a
+   query bound in the form required by the code library *)
+local equiv D_A : D(PRFi).distinguish ~ Real_Ideal(A,Ideal_PRF).main : 
+  PRFi.m{1} = empty /\ ={glob A} ==> card (fdom PRFi.m{1}) <= QCounter.q{2}.
+proof.
+  proc*; inline *; wp.
+  call (_: PRFi.m{1} = RF.m{2} /\ card (fdom RF.m{2}) <= QCounter.q{2}).
+  proc; inline *; wp.
+  if{1};auto => />. move => *; smt(@SmtMap @FSet).
+  by move => *; split; [ by rewrite doutput_ll | by smt() ].
+  by auto => />; smt(@SmtMap @FSet).
+qed.
+
+(* This  is  the PRF/PRP switching  lemma in our setting. If the
+   adversary makes a  bounded number of queries, then the distinguishing
+   advantage is bounded by a  birthday bound. The core lirary lemma we
+   use is called RP_RFt.Conclusion.
+  ` mu1 doutput witness` is the probability of a type inhabitant, which
+    is the case for all such inhabitants as we assume that it is uniform. *)
+lemma prf_prp &m:
+  hoare[ Real_Ideal(A,Ideal_PRF).main : true ==> QCounter.q <= q ] =>
+  `| Pr[ Real_Ideal(A,Ideal_PRF).main() @ &m : res] - 
+         Pr[Real_Ideal(A, Ideal_PRP).main() @ &m : res] | <= 
+        (q * (q - 1))%r / 2%r * mu1 doutput witness.
+proof.
+  move=> hcard.
+  have := RP_RFt.Conclusion D _ _ &m.
+  + by move => O; apply (A_ll O).
+  + by conseq D_A hcard => /#. 
+  have -> : Pr[PRFt.IND(RPt.RP, D).main() @ &m : res] = 
+            Pr[Real_Ideal(A,Ideal_PRP).main() @ &m : res].
+  + byequiv => //.
+    proc; inline *; sim (_: RPt.RP.m{1} = RP.m{2}).
+    proc; inline *; sp. 
+    if; 1,3: by auto => />.  
+    by wp; rnd. auto => />. auto => />.
+  have -> : Pr[PRFt.IND(PRFi, D).main() @ &m : res] = 
+            Pr[Real_Ideal(A, Ideal_PRF).main() @ &m : res].
+  + byequiv => //.
+    proc.
+  call (_: PRFi.m{1} = RF.m{2} /\ card (fdom RF.m{2}) <= QCounter.q{2}).
+  proc; inline *; wp.
+  if{1};auto => />. move => *; smt(@SmtMap @FSet).
+  by move => *; split; [ by rewrite doutput_ll | by smt() ].
+  inline *. auto => />. smt(@SmtMap @FSet).
+  by smt().
+qed.
+
+end section.

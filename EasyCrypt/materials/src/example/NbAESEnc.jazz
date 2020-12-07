@@ -1,0 +1,30 @@
+/* Nonce-based symmetric encryption for 16-byte messages
+   using AES as a PRF */
+
+/* We use cpp to manage modules in Jasmin */
+#include "../aeslib/aes.jazz"
+
+/* We make xor into a function, but this costs nothing 
+   because Jasmin compiler does not include inlining 
+   moves (warning issued o/w). */
+inline fn xor(reg u128 a, reg u128 b) -> reg u128 {
+    reg u128 r;
+    r = a^b;
+    return r;
+}
+
+/* These functions can be called from C for testing. */
+
+export fn enc(reg u128 k, reg u128 n, reg u128 p) -> reg u128 {
+    reg u128 mask,c;
+    mask = aes(k,n);
+    c = xor(mask,p);
+    return(c);
+}
+
+export fn dec(reg u128 k, reg u128 n, reg u128 c) -> reg u128 {
+    reg u128 mask,p;
+    mask = aes(k,n);
+    p = xor(mask,c);
+    return(p);
+}
