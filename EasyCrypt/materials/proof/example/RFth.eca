@@ -1,0 +1,60 @@
+(*  
+    Formalization of a lazily sampled random function 
+    as an EasyCrypt module that can be used in arbitrary
+    games.
+
+    The types of inputs and outputs can be defined to
+    be arbitrary types when the theory is cloned.
+
+    Any clone will include the axioms that allow seeing
+    the output as a finite type from which you can
+    sample uniformly at random.
+*)
+
+require import AllCore Distr SmtMap.
+
+(* Abstract theories are templates for concrete theories, so each
+   development should create its own copy of the definitions by
+   cloning and, if needed, refinement. *)
+type input.
+type output.
+
+(* We need to sample from the output type whatever it is *)
+op doutput : output distr.
+
+(* The following axioms define the uniform distribution over the
+   output type. *)
+
+(* Sampling must always terminate and the distribution adds to 1%r *)
+axiom doutput_ll : is_lossless doutput.
+(* All values in the support have the same probability *)
+axiom doutput_uni : is_uniform doutput.
+(* All values are in the support *)
+axiom doutput_full : is_full doutput.
+
+(* Idealized random funcions are modeled as lazily sampled
+   oracles, which have the following types. *)
+module type Orcl = {
+  proc f(i:input) : output
+}.
+
+module type Orcl_i = {
+  proc init() : unit
+  include Orcl
+}.
+
+(* A truly random function can be lazily sampled as follows. *)
+module RF : Orcl_i = {
+  var m : (input, output) fmap
+
+  proc init() = { 
+    m <- empty;
+  } 
+
+  proc f(i:input) = {
+    var r;
+    r <$ doutput;
+    if (i \notin m) m.[i] <- r;
+    return oget m.[i];
+  }
+}.

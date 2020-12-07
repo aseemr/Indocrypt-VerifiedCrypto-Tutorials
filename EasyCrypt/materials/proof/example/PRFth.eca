@@ -1,0 +1,94 @@
+(*  
+    Formalization of Pseudorandom Function
+    and their relation.
+
+    Syntax and security.
+*)
+
+require import AllCore Int Distr FSet SmtMap Real.
+require import QCounter.
+require (****) RFth.
+
+(* We create a local copy of all the definitions in RF. *)
+clone include RFth.
+
+(* Syntax of the PRF *)
+type key.
+
+(* The following are the mimimum properties we require on
+   the distribution over keys for proofs to go through. *)
+
+(* We need to efficiently sample keys from some arbitrary
+   distribution *)
+op dkey : key distr.
+axiom dkey_ll : is_lossless dkey.
+
+(* This function will be assumed to be a PRF. 
+   Cloning this theory and replacing f with an arbitrary
+   operator gives us the assumption that that operator
+   is a PRF. *)
+op f : key -> input -> output.
+
+(* Definition of the PRF security game  *)
+
+(* The type of adversaries *)
+module type Adv (O:Orcl) = {
+  proc guess() : bool
+}.
+
+(* Real-world oracle: PRF is used on random key *)
+module Real_PRF : Orcl_i = {
+  var k : key
+
+  proc init () = {
+    QCounter.init();
+    k <$ dkey;
+  }
+
+  proc f(i:input) : output = {
+    QCounter.count();
+    return f k i;
+  } 
+}.
+
+(* Ideal-world oracle, we generalize it so any idealized
+   function can be passed in. *)
+module Ideal(F : Orcl_i) : Orcl_i = {
+  proc init() = {
+    QCounter.init();
+    F.init();
+  }
+  
+  proc f(i:input) : output = {
+    var r;
+    QCounter.count();
+    r <@ F.f(i);
+    return r;
+  } 
+}.
+
+
+(* Now we define the PRF ideal oracle *)
+module Ideal_PRF = Ideal(RF).
+
+(* The game: parametric on oracle and adversary *)
+module Real_Ideal(A:Adv, O:Orcl_i) = {
+
+  proc main() = {
+    var b;
+    O.init();
+
+    b <@ A(O).guess();
+    return b;
+  }
+}.
+
+(* 
+ EasyCrypt does not currently give us a way to define 
+ advantage as a function over the reals. 
+ Instead we explicitly write claims as expressions over 
+ probabilities:
+
+ `| Pr[Real_Ideal(A, Real_PRF).main() @ &m : res ] - 
+           Pr[Real_Ideal(A, Ideal_PRF).main() @ &m ] |.
+*)
