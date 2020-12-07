@@ -1,5 +1,5 @@
-JASMINC = # point to your jasminc
-EASYCRYPT = # point to your easycrypt
+JASMINC ?= jasminc # point to your jasminc
+EASYCRYPT ?= easycrypt # point to your easycrypt
 
 EE = extraction/example
 AE = extraction/aeslib
