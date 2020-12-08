@@ -2,9 +2,9 @@
 
 param qEnc.
 
-type mkey [bounded].
+type mkey [fixed].
 type key [fixed].
-type macs [bounded].
+type macs [fixed].
 
 (* Shared-key encryption (CPA Stream cipher) *)
 
