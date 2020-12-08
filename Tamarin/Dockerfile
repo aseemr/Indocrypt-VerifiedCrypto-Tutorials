@@ -1,4 +1,4 @@
-FROM ubuntu:latest AS base
+FROM ubuntu:20.04 AS base
 
 RUN set -xe \
 	&& apt-get update \
