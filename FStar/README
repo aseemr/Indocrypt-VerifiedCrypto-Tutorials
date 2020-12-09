@@ -30,3 +30,16 @@ There are also plenty of examples in the F* github repo shipped as part of the V
 In the FStar/exercises/ directory, there are some small exercises for pure fragment, Sum.fst and stack/.
 
 The lowstar/ directory contains small examples for Low* (VeriCrypt.LowStar.Basic.fst) and some exercises (VeriCrypt.LowStar.fst). If you do a `make` in that directory, it should verify those files, and extract C code in the exercises/lowstar/dist directory. The C code is extracted in files VeriCrypt_LowStar_Basic.c and VeriCrypt_LowStar.c respectively. You can launch those files in emacs and follow them.
+
+
+----------------
+Important note:
+----------------
+
+In the working shell, make sure that the following variables are set. The VM image is set up so that they are set in the rc script. The Dockerfile also sets these appropriately, so you shouldn't need to do anything in particular, but good to check that they are indeed set.
+
+FSTAR_HOME : set to the root of the FStar/ installation (e.g. in the Docker image it would be: /home/vericrypt/everest/FStar)
+KREMLIN_HOME : set to the root of the kremlin/ installation (e.g. in the Docker image it would be: /home/vericrypt/everest/kremlin)
+HACL_HOME : set to the root of the hacl-star/ installation (e.g. in the Docker image it would be: /home/vericrypt/everest/hacl-star)
+
+In addition make sure that the Z3 executable is in the PATH. In the Docker container, the Z3 binary is at: /home/vericrypt/everest/z3/bin
