@@ -19,7 +19,7 @@ If you unzip the examples in this directory, you can launch the tamarin prover i
 ## Option 2: Use Docker
 
 ```
-docker build -t tamarin
+docker build -t tamarin .
 mkdir tamarin
 chmod a+rwx tamarin
 docker run -t --net=host --publish 3001:3001 --volume $(pwd)/tamarin:/workspace tamarin
