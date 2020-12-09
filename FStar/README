@@ -1,0 +1,45 @@
+F* project is open source on github: https://github.com/FStarLang/FStar
+
+For the VeriCrypt tutorial, we have provided a VirtualBox image that contains an installation of F*, alongwith the other tools.
+
+This directory also contains a Dockerfile that you can use to build and run a Docker image for F*.
+
+Once you have installed Docker and started the Docker server, use the following commands.
+
+Building the image: docker build --tag vericrypt-fstar:1.0 .
+Run the image: docker run -it --rm vericrypt-fstar:1.0 bash
+
+
+For F* basics, see the tutorial at: http://fstar-lang.org/tutorial/.
+
+Chapters 2-6 should provide basic introduction to F*. The tutorial also contains some exercises that you can try as you follow along.
+
+
+We have prepared some material for the tutorial in the following git repo:
+
+https://github.com/aseemr/Indocrypt-VerifiedCrypto-Tutorials
+
+The VirtualBox image that we have provided already contains a clone of it (though you may want to update it to get the latest changes) in the directory /home/vericrypt/tutorial.
+
+If you are using the Docker option, you can clone this repo in your Docker container.
+
+The FStar/exercises/ directory in this repo is setup so that in there you can launch an emacs client and start writing your own examples.
+
+There are also plenty of examples in the F* github repo shipped as part of the VM (/home/vericrypt/evercrypt/FStar/examples/).
+
+In the FStar/exercises/ directory, there are some small exercises for pure fragment, Sum.fst and stack/.
+
+The lowstar/ directory contains small examples for Low* (VeriCrypt.LowStar.Basic.fst) and some exercises (VeriCrypt.LowStar.fst). If you do a `make` in that directory, it should verify those files, and extract C code in the exercises/lowstar/dist directory. The C code is extracted in files VeriCrypt_LowStar_Basic.c and VeriCrypt_LowStar.c respectively. You can launch those files in emacs and follow them.
+
+
+----------------
+Important note:
+----------------
+
+In the working shell, make sure that the following variables are set. The VM image is set up so that they are set in the rc script. The Dockerfile also sets these appropriately, so you shouldn't need to do anything in particular, but good to check that they are indeed set.
+
+FSTAR_HOME : set to the root of the FStar/ installation (e.g. in the Docker image it would be: /home/vericrypt/everest/FStar)
+KREMLIN_HOME : set to the root of the kremlin/ installation (e.g. in the Docker image it would be: /home/vericrypt/everest/kremlin)
+HACL_HOME : set to the root of the hacl-star/ installation (e.g. in the Docker image it would be: /home/vericrypt/everest/hacl-star)
+
+In addition make sure that the Z3 executable is in the PATH. In the Docker container, the Z3 binary is at: /home/vericrypt/everest/z3/bin
