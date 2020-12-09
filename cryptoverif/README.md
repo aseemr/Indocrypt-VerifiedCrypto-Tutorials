@@ -1,5 +1,37 @@
 # CryptoVerif
 
+## Install manually
+
+Here are some instructions for manual installation. They are based
+on Ubuntu, but you might be able to adapt them for your OS.
+
+* You can use the Bash script `install.sh`, we tested it on Ubuntu, and
+  used it to install CryptoVerif in the VM.
+* Alternatively, install the dependencies:
+  * `sudo apt-get install m4 ocaml opam zlib1g-dev`
+  * `opam install ocaml ocamlfind cryptokit conf-m4`
+* Then, execute the `./build` script in unpacked the CryptoVerif directory.
+
+### Editor support
+
+* For Vim, [mgrabovsky/vim-xverif](https://github.com/mgrabovsky/vim-xverif)
+  provides syntax highlighting. See [these lines](https://github.com/aseemr/Indocrypt-VerifiedCrypto-Tutorials/blob/main/cryptoverif/install.sh#L44-L57)
+  in the `install.sh` script for some guidance on how to install it with the
+  vim-plug plugin manager.
+* For Emacs, put the following into your `.emacs`, and replace `${CRYPTOVERIF}`
+  by the directory to which you extracted the CryptoVerif archive:
+```
+(add-to-list 'load-path "${CRYPTOVERIF}/emacs")
+
+(setq auto-mode-alist
+  (cons '("\\.cv[l]?$" . cryptoverif-mode)
+  (cons '("\\.ocv[l]?$" . cryptoverifo-mode)
+  (cons '("\\.pcv$" . pcv-mode) auto-mode-alist))))
+(autoload 'cryptoverif-mode "cryptoverif" "Major mode for editing CryptoVerif code." t)
+(autoload 'cryptoverifo-mode "cryptoverif" "Major mode for editing CryptoVerif code." t)
+(autoload 'pcv-mode "cryptoverif" "Major mode for editing ProVerif and CryptoVerif code." t)
+```
+
 ## Run from Docker
 
 * Build a docker image from the Dockerfile using `docker build .`
