@@ -32,6 +32,11 @@ on Ubuntu, but you might be able to adapt them for your OS.
 (autoload 'pcv-mode "cryptoverif" "Major mode for editing ProVerif and CryptoVerif code." t)
 ```
 
+## Testing the installation
+
+For example, run `cryptoverif examples/obasic/OAEP.ocv`. It should produce
+a long output that finishes with `All queries proved.`.
+
 ## Run from Docker
 
 * Build a docker image from the Dockerfile using `docker build .`
