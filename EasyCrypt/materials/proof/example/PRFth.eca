@@ -90,5 +90,36 @@ module Real_Ideal(A:Adv, O:Orcl_i) = {
  probabilities:
 
  `| Pr[Real_Ideal(A, Real_PRF).main() @ &m : res ] - 
-           Pr[Real_Ideal(A, Ideal_PRF).main() @ &m ] |.
+       Pr[Real_Ideal(A, Ideal_PRF).main() @ &m : res ] |.
 *)
+
+section.
+
+declare module A : Adv {QCounter}.
+ 
+axiom A_guess_ll (O <: Orcl) :
+    islossless O.f => islossless A(O).guess.
+
+
+lemma foo &m :
+  Pr[Real_Ideal(A, Real_PRF).main() @ &m : 0 <= QCounter.q] = 1%r.
+proof.
+
+have game_ll : islossless Real_Ideal(A, Real_PRF).main.
++ proc; inline *; islossless. 
+  apply (A_guess_ll Real_PRF).
+  proc; inline*; islossless. 
+  + by apply dkey_ll.
+
+have qcge0 : hoare [ Real_Ideal(A, Real_PRF).main :
+                             true ==> 0 <= QCounter.q].
+proc; inline *.
+call(_:  0 <= QCounter.q).
++ by proc; inline *; auto => /#.
++ by rnd;wp;auto => />.
+byphoare => //.
+by conseq game_ll qcge0; auto => />.
+
+qed.
+
+end section.

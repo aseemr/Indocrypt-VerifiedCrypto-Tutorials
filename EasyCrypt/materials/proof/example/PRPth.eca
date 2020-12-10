@@ -65,7 +65,7 @@ module Ideal_PRP = Ideal(RP).
  probabilities:
 
  `| Pr[Real_Ideal(A, Real_PRP).main() @ &m : res ] - 
-           Pr[Real_Ideal(A, Ideal_PRP).main() @ &m ] |.
+     Pr[Real_Ideal(A, Ideal_PRP).main() @ &m : res ] |.
 *)
 
 (*************************************************************)
@@ -143,9 +143,8 @@ proof.
             Pr[Real_Ideal(A,Ideal_PRP).main() @ &m : res].
   + byequiv => //.
     proc; inline *; sim (_: RPt.RP.m{1} = RP.m{2}).
-    proc; inline *; sp. 
-    if; 1,3: by auto => />.  
-    by wp; rnd. auto => />. auto => />.
+    proc; inline *; sp.
+    if; by auto => /#.  
   have -> : Pr[PRFt.IND(PRFi, D).main() @ &m : res] = 
             Pr[Real_Ideal(A, Ideal_PRF).main() @ &m : res].
   + byequiv => //.
