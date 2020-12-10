@@ -103,14 +103,24 @@ module M = {
     return (state);
   }
   
+  proc addRoundKey (state:W128.t, rk:W128.t) : W128.t = {
+    
+    
+    
+    state <- (state `^` rk);
+    return (state);
+  }
+  
   proc invaes_rounds (rkeys:W128.t Array11.t, in_0:W128.t) : W128.t = {
     var aux: int;
     
     var state:W128.t;
+    var rk:W128.t;
     var round:int;
     
     state <- in_0;
-    state <- (state `^` rkeys.[10]);
+    rk <- rkeys.[10];
+    state <@ addRoundKey (state, rk);
     round <- 9;
     while (0 < round) {
       state <- AESDEC state rkeys.[round];

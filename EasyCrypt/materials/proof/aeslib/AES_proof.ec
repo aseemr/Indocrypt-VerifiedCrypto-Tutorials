@@ -79,7 +79,7 @@ proof.
   while (={round, state} /\ 0 <= round{1} <= 9 /\
     (forall i, 1 <= i < 10 => rkeys{1}.[i] = InvMixColumns rkeys{2}.[i])).
   + by wp; skip; rewrite -AESDEC_AESDEC_ /#.
-  by wp; skip => /#.
+  by inline *; wp; skip => /#.
 qed.
 
 equiv invaes_E : M.invaes ~ Aes.invaes : ={arg} ==> ={res}.

@@ -26,7 +26,7 @@ Folder `proof/example` contains the EasyCrypt specs and proofs for the example:
 - `RPth.eca`: formalization of a random permutation
 - `PRFth.eca`: formalization of pseudorandom function
 - `PRPth.eca`: formalization of pseudorandom permutation and RF/RP switching lemma
-- `NbEnc.ec`: formalization of syntax, correctness and security of nonce-based encryption
+- `NbEnc.eca`: formalization of syntax, correctness and security of nonce-based encryption
 - `NbPRFEnc.ec`: nonce-based encryption from a PRF (the main example)
 - `NbAESEnc_proof.ec`: Correctness and security proof for Jasmin implementation with register calling convention wrt to `NbPRFEnc.ec`
 - `NbAESEnc_ct_proof.ec`: Constant-time proof for Jasmin implementation with register calling convention
