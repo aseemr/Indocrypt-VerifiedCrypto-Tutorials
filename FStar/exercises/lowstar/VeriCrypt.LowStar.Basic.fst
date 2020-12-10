@@ -25,7 +25,7 @@ let test1 (_:unit)
   : Stack unit
       (requires fun _ -> True)
       (ensures fun h0 _ h1 -> B.(modifies0 h0 h1))
-  = push_frame ();
+  = push_frame ();  //Low* contruct to state that this function will run with its own stack frame
     let b = B.create 2ul 0ul in
     let x = B.index b 0ul in
     assert (x == 0ul);
