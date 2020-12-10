@@ -80,8 +80,8 @@ equation forall x:host, y:host, z:G, t:G, x2:host, y2:host, z2:G, t2:G;
 (* Signatures *)
 proba Psign.
 proba Psigncoll.
-(*expand UF_CMA_proba_signature(*)
-expand UF_CMA_det_signature(
+(* expand UF_CMA_det_signature( *)
+expand UF_CMA_proba_signature(
   (* types, to be defined outside the macro *)
   keyseed,
   pkey,
