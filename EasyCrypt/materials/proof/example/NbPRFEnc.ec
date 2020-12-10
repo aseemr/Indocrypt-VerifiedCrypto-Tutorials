@@ -1,6 +1,6 @@
 require import AllCore SmtMap List Distr.
-require import NbEnc QCounter.
-require (****) PRFth.
+require import QCounter.
+require (****) PRFth NbEnc.
 
 theory NbPRFEnc.
 
@@ -189,7 +189,7 @@ section PROOF.
     indicate that A cannot touch the internal states of these
     modules. Otherwise the proof fails (e.g., A could just get
     the PRF key! *)
-declare module A:AdvCPA {CPA, Real_Ideal, Real_PRF, RealScheme, RF}.
+declare module A:AdvCPA {Real_Ideal, Real_PRF, RealScheme, RF, WO}.
 
 (* We prove equivalences between games using pRHL, which then
    allow us to derive probability results as a consequence.
@@ -208,7 +208,7 @@ lemma Real_CPA_PRF :
 proof.
 proc.
  inline *; wp. 
-call (: ={CPA.nonces,QCounter.q} /\ RealScheme.k{1} = Real_PRF.k{2}).
+call (: ={WO.nonces,QCounter.q} /\ RealScheme.k{1} = Real_PRF.k{2}).
 + by proc; inline *; auto => /> /#.
 by auto => />.
 qed.
@@ -241,7 +241,7 @@ lemma Modified_CPA_PRF:
             ={glob A} ==> ={res, QCounter.q} ].
 proof.
 proc; inline *; wp.
-call (: ={CPA.nonces,RF.m,QCounter.q}).
+call (: ={WO.nonces,RF.m,QCounter.q}).
 + by proc; inline *;sim.
 by auto.
 qed.
@@ -254,8 +254,8 @@ lemma Modified_CPA_Ideal:
             ={glob A} ==> ={res, QCounter.q} ].
 proof.
 proc; inline *; wp.
-call (: ={CPA.nonces,QCounter.q} /\
-          (forall n, n \in CPA.nonces = n \in RF.m){1}).
+call (: ={WO.nonces,QCounter.q} /\
+          (forall n, n \in WO.nonces = n \in RF.m){1}).
 + proc; inline *.
   sp; if; 1, 3: by auto.
   rcondt{1} ^if; 1: by auto => /#.  
@@ -326,7 +326,7 @@ end section PROOF.
 
 section PROOF.
 
-declare module A:AdvCPA {CPA, Real_PRF, Ideal, RealScheme, ModifiedScheme}.
+declare module A:AdvCPA {WO, Real_PRF, Ideal, RealScheme, ModifiedScheme}.
 
 (* If PRF game uses RF then we are using the ideal scheme.
    We need to argue that xor acts as a one time pad to get the
@@ -336,8 +336,8 @@ lemma Ideal_CPA_PRF :
             ={glob A} ==> ={res, QCounter.q} ].
 proof.
 proc; inline *; wp.
-call (: ={CPA.nonces,QCounter.q} /\
-            (forall n, n \in CPA.nonces = n \in RF.m){2}).
+call (: ={WO.nonces,QCounter.q} /\
+            (forall n, n \in WO.nonces = n \in RF.m){2}).
 + proc; inline *.
   sp; if; 1, 3: by auto.
   rcondt{2} ^if; 1: by auto => /#.  

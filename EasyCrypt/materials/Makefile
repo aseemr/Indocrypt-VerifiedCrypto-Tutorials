@@ -140,6 +140,9 @@ proofs: all
 	@echo '************************************************'
 	@echo '*** Machine-checking encryption scheme proof ***'
 	@echo '************************************************'
+	for f in proof/example/*.eca; do echo $$f; \
+	    $(EASYCRYPT) compile $$f -I $(AE) -I $(EE)\
+	                          -I $(AP); done
 	for f in proof/example/*.ec; do echo $$f; \
 	    $(EASYCRYPT) compile $$f -I $(AE) -I $(EE)\
 	                          -I $(AP); done
