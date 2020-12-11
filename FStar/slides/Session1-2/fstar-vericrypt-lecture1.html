@@ -1,0 +1,1296 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+  <meta name="generator" content="Madoko, version 1.2.3" />
+  <meta name="author" content="Aseem Rastogi" />
+  <title>Introduction to Programming and Verification in F*</title>
+  <style type="text/css"  class="link">
+  /*# sourceURL=madoko.css */
+  
+  .madoko .toc>.tocblock .tocblock .tocblock {
+    margin-left: 2.25em;
+  }
+  .madoko .toc>.tocblock .tocblock {
+    margin-left: 1.5em;
+  }
+  .madoko .toc-contents>.tocblock>.tocitem {
+    font-weight: bold;
+  }
+  .madoko .toc {
+    margin-top: 1em;
+  }
+  .madoko p.para-continue {
+    margin-bottom: 0pt;
+  }
+  .madoko .para-block+p {
+    margin-top: 0pt;
+  }
+  .madoko ul.para-block, .madoko ol.para-block {
+    margin-top: 0pt;
+    margin-bottom: 0pt;
+  }
+  .madoko ul.para-end, .madoko ol.para-end {
+    margin-bottom: 1em;
+  }
+  .madoko dl {
+    margin-left: 0em;
+  }
+  .madoko blockquote {
+    font-style: italic;
+  }
+  .madoko a.localref {
+    text-decoration: none;
+  }
+  .madoko a.localref:hover {
+    text-decoration: underline;
+  }
+  .madoko .footnotes {
+    font-size: smaller;
+    margin-top: 2em;
+  }
+  .madoko .footnotes hr {
+    width: 50%;
+    text-align: left;
+  }
+  .madoko .footnote {
+    margin-left: 1em;
+  }
+  .madoko .footnote-before {
+    margin-left: -1em;
+    width: 1em;
+    display: inline-block;
+  }
+  .madoko .align-center, .madoko .align-center>p {
+    text-align: center !important;
+  }
+  .madoko .align-center pre {
+    text-align: left;
+  }
+  .madoko .align-center>* {
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+  .madoko .align-left, .madoko .align-left>p {
+    text-align: left !important;
+  }
+  .madoko .align-left>* {
+    margin-left: 0pt !important;
+    margin-right: auto !important;
+  }
+  .madoko .align-right, .madoko .align-right>p {
+    text-align: right !important;
+  }
+  .madoko .align-right>* {
+    margin-left: auto !important;
+    margin-right: 0pt !important;
+  }
+  .madoko .align-center>table,
+  .madoko .align-left>table,
+  .madoko .align-right>table {
+    text-align: left !important;
+  }
+  .madoko .equation-before {
+    float: right;
+  }
+  .madoko .bibitem {
+    font-size: smaller;
+  }
+  .madoko .bibsearch {
+    font-size: x-small;
+    text-decoration:none;
+    color: black;
+    font-family: "Segoe UI Symbol", Symbola, serif;
+  }
+  .madoko .block, .madoko .figure, .madoko .bibitem, .madoko .equation, .madoko div.math {
+    margin-top: 1ex;
+    margin-bottom: 1ex;
+  }
+  .madoko .figure {
+    padding: 0.5em;
+    margin-left: 0pt;
+    margin-right: 0pt;
+  }
+  .madoko .hidden {
+    display: none;
+  }
+  .madoko .invisible {
+    visibility: hidden;
+  }
+  .madoko.preview .invisible {
+    visibility: visible;
+    opacity: 0.5;
+  }
+  .madoko code.code, .madoko span.code {
+    white-space: pre-wrap;
+  }
+  .madoko hr, hr.madoko {
+    border: none;
+    border-bottom: black solid 1px;
+    margin-bottom: 0.5ex;
+  }
+  .madoko .framed>*:first-child {
+    margin-top: 0pt;
+  }
+  .madoko .framed>*:last-child {
+    margin-bottom: 0pt;
+  }
+  .madoko ul.list-style-type-dash {
+      list-style-type: none !important;
+  }
+  .madoko ul.list-style-type-dash > li:before {
+      content: "\2013";
+      position: absolute;
+      margin-left: -1em;
+  }
+  .madoko table.madoko {
+    border-collapse: collapse;
+  }
+  .madoko td, .madoko th {
+    padding: 0ex 0.5ex;
+    margin: 0pt;
+    vertical-align: top;
+  }
+  .madoko .cell-border-left {
+    border-left: 1px solid black;
+  }
+  .madoko .cell-border-right {
+    border-right: 1px solid black;
+  }
+  .madoko thead>tr:first-child>.cell-line,
+  .madoko tbody:first-child>tr:first-child>.cell-line {
+    border-top: 1px solid black;
+    border-bottom: none;
+  }
+  .madoko .cell-line, .madoko .cell-double-line {
+    border-bottom: 1px solid black;
+    border-top: none;
+  }
+  .madoko .cell-double-line {
+    border-top: 1px solid black;
+    padding-top: 1.5px !important;
+  }
+  .madoko .input-mathpre .MathJax_Display {
+    text-align: left !important;
+  }
+  .madoko div.input-mathpre {
+    text-align: left;
+    margin-top: 1.5ex;
+    margin-bottom: 1ex;
+  }
+  .madoko .math-rendering {
+    text-align: left;
+    white-space: pre;
+    color: gray;
+  }
+  .madoko .mathdisplay {
+    text-align: center;
+  }
+  .madoko span.math-rendering {
+    display:inline-block;
+    width:8em;
+    overflow-x:auto;
+    font-size:70%;
+  }
+  .madoko span.math-rendering::-webkit-scrollbar {
+    width:4px;
+  }
+  .madoko .pretty table {
+    border-collapse: collapse;
+  }
+  .madoko .pretty td {
+    padding: 0em;
+  }
+  .madoko .pretty td.empty {
+    min-width: 1.5ex;
+  }
+  .madoko .pretty td.expander {
+    width: 100em;
+  }
+  body.madoko, .madoko .serif {
+    font-family: Cambria,"Times New Roman","Liberation Serif","Times",serif;
+  }
+  .madoko .sans-serif {
+    font-family: "Calibri", "Optima", sans-serif;
+  }
+  .madoko .symbol {
+    font-family: "Segoe UI Symbol", Symbola, serif;
+  }
+  body.madoko {
+    -webkit-text-size-adjust: 100%;       
+    text-rendering: optimizeLegibility;
+  }
+  body.madoko {
+    max-width: 88ex; 
+    margin: 1em auto;
+    padding: 0em 2em;
+  }
+  body.preview.madoko {
+    padding: 0em 1em;
+  }
+  .madoko p {
+    text-align: justify;
+  }
+  .madoko h1, .madoko h2, .madoko h3, .madoko h4 {
+    margin-top: 1.22em;
+    margin-bottom: 1ex;
+  }
+  .madoko h1+p, .madoko h2+p, .madoko h3+p, .madoko h4+p, .madoko h5+p  {
+    margin-top: 1ex;
+  }
+  .madoko h5, .madoko h6 {
+    margin-top: 1ex;
+    font-size: 1em;
+  }
+  .madoko h5 {
+    margin-bottom: 0.5ex;
+  }
+  .madoko h5 + p {
+    margin-top: 0.5ex;
+  }
+  .madoko h6 {
+    margin-bottom: 0pt;
+  }
+  .madoko h6 + p {
+    margin-top: 0pt;
+  }
+  .madoko pre, .madoko code, .madoko kbd, .madoko samp, .madoko tt,
+  .madoko .monospace, .madoko .token-indent, .madoko .reveal pre, .madoko .reveal code, .madoko .email {
+    font-family: Consolas,"Andale Mono WT","Andale Mono",Lucida Console,Monaco,monospace,monospace;
+    font-size: 0.85em;
+  }
+  .madoko pre code, .madoko .token-indent {
+    font-size: 0.95em;
+  }
+  .madoko pre code {
+    font-family: inherit !important;
+  }
+  .madoko ol.linenums li {
+    background-color: white;
+    list-style-type: decimal;
+  }
+  .madoko .remote {
+    background-color: #F0FFF0;
+  }
+  .madoko .remote + * {
+    margin-top: 0pt;
+  }
+  @media print {
+    body.madoko {
+      font-size: 10pt;
+    }
+    @page {
+      margin: 1in 1.5in;
+    }
+  }
+  @media only screen and (max-device-width:1024px) {
+    body.madoko {
+      padding: 0em 0.5em;
+    }
+    .madoko li {
+      text-align: left;
+    }
+  }
+  
+    </style>
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/reveal.js/2.6.2/css/reveal.min.css"  class="link">
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/reveal.js/2.6.2/css/theme/solarized.css"  class="link">
+  <script src="https://cdn.jsdelivr.net/reveal.js/2.6.2/lib/js/head.min.js"  class="script preview"></script>
+  <script src="https://cdn.jsdelivr.net/reveal.js/2.6.2/js/reveal.js"  class="script preview"></script>
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+      <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/reveal.js/2.6.2/css/theme/solarized.css" id="theme">    
+      <!--[if lt IE 9]>
+      <script src="https://cdn.jsdelivr.net/reveal.js/2.6.2/lib/js/html5shiv.js"></script>
+      <![endif]-->
+      <style>
+      body.madoko {
+        margin: 0pt;
+        padding: 0pt;
+        max-width: 100%;      
+      }
+      .madoko .reveal h1 {
+          font-size: 3.7em;
+      }
+      .madoko .reveal h2 {
+          font-size: 2.1em;
+      }
+      .reveal .authorblock .author {
+          font-size: 120%;
+          margin-bottom: 1ex;
+      }        
+      .reveal table {
+          margin-left: auto;
+          margin-right: auto;
+      }
+      .reveal pre table {
+        margin-left: 0pt;
+      }
+      .madoko .reveal pre.pretty {
+        padding-top: 0pt;
+        padding-bottom: 0pt;
+      }
+      .reveal li p {
+          text-align: left;
+      }
+      .reveal h2 {
+          margin-bottom: 0.7em;
+      }
+      .reveal section ul,
+      .reveal section ol {
+          margin-top: 0.35em;
+          margin-bottom: 0.35em;
+      }
+      .reveal section img.math-display {
+          padding: 1em;
+          box-shadow: none;
+          border: none;
+      }
+      .reveal section img.math-inline {
+          margin: 0pt;
+          padding: 0pt;
+          background-color: none;
+          box-shadow: none;
+          border: none;
+      }
+      .reveal section img {
+          box-shadow: none;
+          border: none;
+      }
+      .madoko .reveal pre {
+          border: 1px solid black;
+          word-wrap: normal;
+          background-color: white;
+          font-size: 0.7em;
+          padding: 0.7em;
+          line-height: 100%;
+          width: 100%;
+      }      
+      .reveal pre code, .reveal code {
+          padding: 0pt;
+      }
+      .reveal nav.toc {
+          line-height: 1em;
+          font-size: 60%;
+          overflow-y: auto;
+      }    
+      .reveal .tocitem {
+          text-align: left;
+      }
+      .reveal .toc>.tocblock .tocblock {
+          margin-left: 0.5em;
+      }   
+      .reveal .toc>.tocblock .tocblock .tocblock {
+          margin-left: 1em;
+      }
+      .reveal .bibliography {
+        height: 18em;
+        overflow-y: auto;
+        font-size: 0.8em;
+        line-height: 1.25;
+      }
+      .reveal section[data-smaller=""],
+      .reveal section[data-smaller="true"] {
+        font-size: 80%;
+        width: 110%;
+      }
+      .reveal .slides>section[data-smaller=""],
+      .reveal .slides>section[data-smaller="true"] {
+        left: -55%;
+      }
+      .reveal .details {
+        display: none;
+      }
+      .reveal[data-details=""] .details,
+      .reveal[data-details="true"] .details {
+        display: initial;
+      }
+      /* Display in the preview window */
+      html, body.madoko.preview, body.madoko.preview-full, .body.madoko {
+        height  : 100% !important;
+        width   : auto!important;
+        padding : 0pt !important;
+        margin  : 0pt !important;
+      }
+      body.madoko.preview, body.madoko.preview-full, .preview .body.madoko {
+        overflow: hidden !important;
+      }
+      body.preview .reveal .slides .fragment {
+        visibility: visible;
+        opacity: 0.5;
+      }
+      body.preview .reveal .slides .fragment.visible {
+        opacity: 1.0;
+      }
+      .preview .reveal div.notes,
+      .preview .reveal aside.notes {
+        display  : block;
+        position : absolute;
+        width    : 30%;
+        left     : 70%;
+        top      : -15%;
+        font-size: 50%;
+        border   : 1px solid black;
+        border-radius   : 10px;
+        background-color: white;
+      }
+      /* 'static' display in the preview window, unused for now */
+      body.preview.static div.reveal, 
+      body.preview.static div.ticreveal .slides, 
+      body.preview.static div.reveal section {
+        display: block !important;
+        position: relative !important;
+        width: auto !important;      
+      }
+      body.preview.static div.reveal section {
+        border: solid 1px black;
+        padding: 1em !important;
+        margin-top: 1em;
+        min-height: 15em;
+        top: 0pt;
+      }
+      body.madoko.preview.static section {
+        font-size: 75%;
+      }
+      body.madoko.preview.static {
+        padding: 0em 1em !important;
+      }
+      body.madoko.preview.static .reveal pre {
+        width: 95%;
+      }    
+      body.preview .reveal[data-details="false"] .details {
+        display: initial;
+        color: gray;
+      }
+      body.preview .reveal[data-long="false"] section[data-long] {
+        border-left: 2px black solid;
+      }
+      </style>
+      <script>    
+      // Full list of configuration options available here:
+      // https://github.com/hakimel/reveal.js#configuration
+      window.revealConfig = {
+          controls: true,
+          progress: true,
+          history: true,
+          center: /^\s*(true|1)\s*$/i.test("true"),
+          slideNumber: /^\s*(true|1)\s*$/i.test("true"),
+          dependencies: [
+            { src: 'https://cdn.jsdelivr.net/reveal.js/2.6.2/lib/js/classList.js', condition: function() { return !document.body.classList; } },
+            { src: 'https://cdn.jsdelivr.net/reveal.js/2.6.2/plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+            { src: 'https://cdn.jsdelivr.net/reveal.js/2.6.2/plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } },
+          ],
+      };
+      function revealAddFragments() {
+        [].forEach.call(document.querySelectorAll( ".fragmented" ), function(elem0) {
+          var elem = (/^H\d$/.test(elem0.nodeName) ? elem0.parentNode : elem0);
+          [].forEach.call(elem.children, function(item) {
+            if (item==elem0) return;
+            if (item && !/\bfragment(ed)?\b/.test(item.className) && item.nodeType===1) {
+              item.className = item.className + " fragment";
+            }
+          });
+        });
+      }
+      function revealQuotedList(listType) {
+        //compatibility with Rmarkdown slides
+        [].forEach.call( document.querySelectorAll("blockquote>" + listType), function(ul) {
+          if (!/\bfragmented\b/.test(ul.className)) {
+            ul.className = ul.className + " fragmented";
+          }        
+          var quote = ul.parentNode;
+          if (quote.childElementCount===1) {
+            quote.parentNode.replaceChild(ul,quote);
+          }
+        });
+      }
+      function revealBuildToFragmented() {
+        [].forEach.call(document.querySelectorAll( ".build" ), function(elem) {
+          if (elem && !/\bfragmented\b/.test(elem.className) && elem.nodeType===1) {
+            elem.className = elem.className + " fragmented";
+          }
+        });
+      }
+      function revealDivNotesToAside() {
+        [].forEach.call(document.querySelectorAll("div.notes"), function(elem) {
+          var aside = document.createElement("ASIDE");
+          if (elem.id) aside.id = elem.id;
+          aside.className = elem.className;
+          [].forEach.call(elem.attributes, function(attr) {
+            aside.setAttribute( attr.name, attr.value );
+          });
+          aside.innerHTML = elem.innerHTML;
+          elem.parentNode.replaceChild(aside,elem);
+        });
+      }
+      function revealDataQuery() {
+        var reveal = document.querySelector(".reveal");
+        if (!reveal) return;
+        window.location.search.replace(/\bdata-(\w+)(?:=(\w+))?\b/g, function(matched,key,value) {
+          reveal.setAttribute("data-" + key, (value ? value : ""));
+          return matched;
+        });
+      }
+      function revealRemoveLong() {
+        // remove parts for 'long' presentation
+        if (/\bpreview(?![\w\-])/.test(document.body.className)) return;
+        var reveal = document.querySelector(".reveal");
+        if (!reveal) return;
+        var value = reveal.hasAttribute("data-long") ? reveal.getAttribute("data-long") : null;
+        if (value==null || value=="false" || value=="0") {
+          [].forEach.call( document.querySelectorAll("section[data-long]"), function(elem) {
+            elem.parentNode.removeChild(elem);
+          });
+        }
+      }
+      revealConfig.onLoad = function() {
+        revealConfig.getEmbeddedImages();
+        revealDataQuery();
+        revealRemoveLong();
+        revealQuotedList("ul");
+        revealQuotedList("ol");
+        revealBuildToFragmented();
+        revealDivNotesToAside();
+        revealAddFragments();
+      };
+      document.addEventListener("load",revealConfig.onLoad);    
+      document.addEventListener("DOMContentLoaded", function() {
+        if (typeof Reveal !== "undefined" && !Reveal.isReady()) {
+          revealConfig.onLoad();
+          Reveal.initialize(revealConfig);
+        }
+      });    
+      // add support for printing:
+      // use  ?print-pdf to get a pdf-printable version (in Chrome)
+      // use  ?print-paper to get a paper-printable version.
+      revealConfig.initPrint = function() {
+        var cssLink = null;
+        var bodyClass = null;
+        var cap = window.location.search.match(/\bprint-(\w+)\b/);
+        if (cap) {
+          bodyClass = cap[0];
+          cssLink = "https://cdn.jsdelivr.net/reveal.js/2.6.2/css/print/" + cap[1] + ".css";
+        }
+        if (cssLink) {
+          var link  = document.createElement( "link" );
+          link.rel  = "stylesheet";
+          link.type = "text/css";
+          link.href = cssLink;
+          var head = document.getElementsByTagName( 'head' )[0];
+          if (head) head.appendChild( link );
+        }
+        if (bodyClass) {
+          document.body.className = document.body.className + " " + bodyClass;
+        }
+      };
+      revealConfig.getEmbeddedImages = function() {
+        var images = {};
+        [].forEach.call( document.querySelectorAll("img[data-linkid]"), function(img) {
+          var linkid = img.getAttribute("data-linkid");
+          if (linkid) images["/" + linkid] = img.src;
+          var path = img.getAttribute("data-path");
+          if (path) images["/" + path] = img.src;
+        });     
+        [].forEach.call( document.querySelectorAll("section"), function(slide) {
+          var attrName = "data-background";
+          var image = slide.getAttribute(attrName);
+          if (!image) {
+            attrName = "data-background-image";
+            image = slide.getAttribute(attrName);
+          }
+          if (!image) return;
+          var cap = /^\s*!?\[([^\]]+)\]\s*$/.exec(image);
+          var href = images["/" + (cap ? cap[1] : image)];
+          if (!href) return;
+          if (attrName==="data-background" && /^data:/.test(href)) href = "url(" + href + ")";
+          slide.setAttribute(attrName, href);
+        });
+      };    
+      </script>
+  <script src="aux/script.js"></script>
+      <link rel="stylesheet" href="aux/style.css" id="custom_style">
+  </head>
+<body class="madoko">
+
+<div class="body madoko" style="line-adjust:0">
+<div class="reveal" data-long="false" data-details="false" data-line="15" style="line-adjust:0">
+<div class="slides" data-line="15" style="line-adjust:0">
+
+<div class="mathdefs input-mathdefs" data-line="16"></div>
+<section id="sec-verified-crypto-with-f-" class="section section1" data-section-depth="1" data-line="20"><h2 id="heading-sec-verified-crypto-with-f-" class="h1" data-heading-depth="1" style="display:block">Verified Crypto with F*</h2>
+<div class="center align-center" data-line="22" style="text-align:center">
+<p class="p noindent" data-line="23"><span data-line="23"></span><a href="https://www.fstar-lang.org"><img src="aux/fstar-new.png" alt="fstar-logo" data-path="aux/fstar-new.png" data-linkid="fstar-logo" style="width:200px"></a><span data-line="23"></span>
+</p>
+<p class="p indent" data-line="25"><span data-line="25"></span><a href="https://www.microsoft.com/en-us/research/people/aseemr/">Aseem Rastogi</a><span data-line="25"></span> and
+<span data-line="26"></span><a href="https://polubelova.github.io/">Marina Polubelova</a><span data-line="26"></span>
+</p>
+<p class="p indent" data-line="28"><span data-line="28"></span>VeriCrypt 2020
+</p></div><!------------------------------------------------------------------------------>
+
+
+</section>
+<section id="sec-logistics" class="section section2" data-section-depth="2" data-line="36"><h3 id="heading-sec-logistics" class="h2" data-heading-depth="2" style="display:block">Logistics</h3>
+<ul class="ul list-star loose" data-line="38">
+<li class="li ul-li list-star-li loose-li" data-line="38">
+<p data-line="38"><span data-line="38"></span>Total duration : 2 hours 30 minutes
+</p></li>
+<li class="li ul-li list-star-li loose-li" data-line="40">
+<p data-line="40"><span data-line="40"></span>Rough breakup:
+</p>
+<ul class="ul list-dash compact" data-line="41">
+<li class="li ul-li list-dash-li compact-li" data-line="41"><span data-line="41"></span>Aseem : Basic introduction to F<span data-line="41"></span>*<span data-line="41"></span> (1hr)
+</li>
+<li class="li ul-li list-dash-li compact-li" data-line="42"><span data-line="42"></span>10 minutes break
+</li>
+<li class="li ul-li list-dash-li compact-li" data-line="43"><span data-line="43"></span>Aseem : Low-level programming in F<span data-line="43"></span>*<span data-line="43"></span> (30mins.)
+</li>
+<li class="li ul-li list-dash-li compact-li" data-line="44"><span data-line="44"></span>10 minutes break
+</li>
+<li class="li ul-li list-dash-li compact-li" data-line="45"><span data-line="45"></span>Marina : Verified crypto programming in F<span data-line="45"></span>*<span data-line="45"></span> (40mins.)
+</li></ul>
+</li>
+<li class="li ul-li list-star-li loose-li fragment" data-line="47">
+<p data-line="47"><span data-line="47"></span>Ask questions on Zulip, we have several experts around!
+</p>
+<ul class="ul list-dash compact" data-line="48">
+<li class="li ul-li list-dash-li compact-li" data-line="48"><span data-line="48"></span>Son Ho, Natalia Kulatova, Denis Merigoux, Zhe Tao, Théophile Wallez
+</li></ul>
+</li>
+<li class="li ul-li list-star-li loose-li fragment" data-line="50">
+<p data-line="50"><span data-line="50"></span>There is a Zulip topic titled <span data-line="50"></span>&#8220;Questions for speakers&#8221;<span data-line="50"></span> in the F<span data-line="50"></span>*<span data-line="50"></span> stream, please post any specific questions about the talk, slides, etc. that you would like to see addressed in the Zoom session
+</p></li>
+<li class="li ul-li list-star-li loose-li fragment" data-line="52">
+<p data-line="52"><span data-line="52"></span><strong class="strong-star2">Update your local clone of the Indocrypt-VerifiedCrypto-Tutorials github repo</strong><span data-line="52"></span>
+</p></li></ul>
+<!------------------------------------------------------------------------------>
+
+
+
+</section>
+<section id="sec-acknowledgements" class="section section1" data-section-depth="1" data-line="58"><h2 id="heading-sec-acknowledgements" class="h1" data-heading-depth="1" style="display:block">Acknowledgements</h2>
+<ul class="ul list-dash loose" data-line="60">
+<li class="li ul-li list-dash-li loose-li" data-line="60">
+<p data-line="60"><span data-line="60"></span>Joint work with several collaborators at<span data-line="60"></span> <span style="color:DarkGreen"><strong class="strong-star2">Microsoft Research, Inria Paris, Rosario, CMU, UC Davis, &#8230;</strong></span><span data-line="60"></span>
+</p>
+<ul class="ul list-plus compact" data-line="61">
+<li class="li ul-li list-plus-li compact-li" data-line="61"><span data-line="61"></span>many former members, interns, external contributors
+</li></ul>
+</li>
+<li class="li ul-li list-dash-li loose-li" data-line="63">
+<p data-line="63"><span data-line="63"></span>Resources
+</p>
+<ul class="ul list-plus compact" data-line="64">
+<li class="li ul-li list-plus-li compact-li" data-line="64"><span data-line="64"></span><a href="https://fstar-lang.org">https://fstar-lang.org</a><span data-line="64"></span>
+</li>
+<li class="li ul-li list-plus-li compact-li" data-line="65"><span data-line="65"></span><a href="https://github.com/FStarLang/FStar">https://github.com/FStarLang/FStar</a><span data-line="65"></span>
+</li></ul>
+</li></ul>
+<!-- # The current F\* team # -->
+
+
+<!------------------------------------------------------------------------------>
+
+
+
+</section>
+<section id="sec-what-is-f-" class="section section2" data-section-depth="2" data-line="72"><h3 id="heading-sec-what-is-f-" class="h2" data-heading-depth="2" style="display:block">What is F*</h3><!-- General-purpose -->
+
+
+<ul class="ul list-star loose" data-line="75">
+<li class="li ul-li list-star-li loose-li" data-line="75">
+<p data-line="75"><span data-line="75"></span><strong class="strong-star2"><span style="color:Black">Functional programming language with effects</span></strong><span data-line="75"></span>
+</p>
+<ul class="ul list-dash compact" data-line="76">
+<li class="li ul-li list-dash-li compact-li" data-line="76"><span data-line="76"></span>like OCaml, F<span data-line="76"></span>#<span data-line="76"></span>, Haskell, <span data-line="76"></span>&#8230;<span data-line="76"></span>
+<!-- ``` -->
+
+<!-- let incr (r:ref a) = r := !r + 1 -->
+
+<!-- ``` -->
+
+<!-- - F\* extracted to OCaml or F\# by default -->
+
+<!-- - subset of F\* extracted to efficient C code -->
+
+</li></ul>
+</li>
+<li class="li ul-li list-star-li loose-li fragment" data-line="83">
+<p data-line="83"><span data-line="83"></span><strong class="strong-star2"><span style="color:DarkBlue">Semi-automated verification system using SMT</span></strong><span data-line="83"></span>
+</p>
+<ul class="ul list-dash compact" data-line="84">
+<li class="li ul-li list-dash-li compact-li" data-line="84"><span data-line="84"></span>like Dafny, FramaC, Why3, Liquid Types, <span data-line="84"></span>&#8230;<span data-line="84"></span>
+</li></ul>
+</li>
+<li class="li ul-li list-star-li loose-li fragment" data-line="86">
+<p data-line="86"><span data-line="86"></span><strong class="strong-star2"><span style="color:DarkRed">Expressive core based on dependent type theory</span></strong><span data-line="86"></span>
+</p><!-- - full dependency, inductive types, universe polymorphism -->
+
+
+<ul class="ul list-dash compact" data-line="88">
+<li class="li ul-li list-dash-li compact-li" data-line="88"><span data-line="88"></span>like Coq, Agda, Lean, Nuprl, <span data-line="88"></span>&#8230;<span data-line="88"></span>
+</li></ul>
+</li>
+<li class="li ul-li list-star-li loose-li fragment" data-line="90">
+<p data-line="90"><span data-line="90"></span><strong class="strong-star2"><span style="color:DarkGreen">A metaprogramming and tactic framework<br/>
+for interactive proof and user-defined automation</span></strong><span data-line="91"></span>
+</p>
+<ul class="ul list-dash compact" data-line="92">
+<li class="li ul-li list-dash-li compact-li" data-line="92"><span data-line="92"></span>like Coq, Lean, Nuprl, Isabelle, HOL, etc.
+</li></ul>
+</li></ul>
+<!-- * {.fragment} Other tools in this space: -->
+
+<!--   - DML/ATS, HTT, Idris, Trellys/Zombie, CoqHammer, ... -->
+
+  <!-- - But F\* is the closest to bridging the gap by nicely integrating these three things -->
+
+
+<!------------------------------------------------------------------------------>
+
+
+</section>
+<section id="sec-running-f--programs" class="section section1" data-section-depth="1" data-line="101"><h2 id="heading-sec-running-f--programs" class="h1" data-heading-depth="1" style="display:block">Running F* Programs</h2>
+<div class="center align-center" data-line="103" style="text-align:center">
+<p class="p noindent" data-line="104"><span data-line="104"></span><img src="aux/fstar-lowstar-vale-compilation.png" alt="fstar-lowstar-vale-compilation" data-path="aux/fstar-lowstar-vale-compilation.png" data-linkid="fstar-lowstar-vale-compilation" style="width:800px"></p></div><!------------------------------------------------------------------------------>
+
+
+</section>
+<section id="sec-uses-of-f-" class="section section2" data-section-depth="2" data-line="111"><h3 id="heading-sec-uses-of-f-" class="h2" data-heading-depth="2" style="display:block">Uses of F*</h3>
+<ul class="ul list-star compact" data-line="113">
+<li class="li ul-li list-star-li compact-li" data-line="113"><span data-line="113"></span>Projects using F<span data-line="113"></span>*<span data-line="113"></span>
+
+<ul class="ul list-dash compact" data-line="114">
+<li class="li ul-li list-dash-li compact-li" data-line="114"><span data-line="114"></span><a href="https://github.com/project-everest/hacl-star">HACL*</a><span data-line="114"></span>: High-Assurance Cryptographic Library
+</li>
+<li class="li ul-li list-dash-li compact-li" data-line="115"><span data-line="115"></span><a href="https://github.com/project-everest/vale">Vale*</a><span data-line="115"></span>: A DSL for Verified Assembly Programs
+</li>
+<li class="li ul-li list-dash-li compact-li" data-line="116"><span data-line="116"></span><a href="https://github.com/project-everest/hacl-star/providers/evercrypt">EverCrypt</a><span data-line="116"></span>: Agile Cryptographic Provider
+</li>
+<li class="li ul-li list-dash-li compact-li" data-line="117"><span data-line="117"></span><a href="https://github.com/project-everest/everparse">EverParse</a><span data-line="117"></span>: Verified parsers and formatter generators
+</li></ul></li></ul>
+
+<ul class="ul list-star compact" data-line="120">
+<li class="li ul-li list-star-li compact-li" data-line="120"><span data-line="120"></span>Verified F<span data-line="120"></span>*<span data-line="120"></span> code deployed in
+
+<ul class="ul list-dash compact" data-line="121">
+<li class="li ul-li list-dash-li compact-li" data-line="121"><span data-line="121"></span>Hyper-V (the virtualization technology used in Microsoft Azure)
+</li>
+<li class="li ul-li list-dash-li compact-li" data-line="122"><span data-line="122"></span>Azure Confidential Consortium (verified Merkle tree for the blockchain)
+</li>
+<li class="li ul-li list-dash-li compact-li" data-line="123"><span data-line="123"></span>Firefox (Mozilla NSS crypto)
+</li>
+<li class="li ul-li list-dash-li compact-li" data-line="124"><span data-line="124"></span>Windows (WinQUIC)
+</li>
+<li class="li ul-li list-dash-li compact-li" data-line="125"><span data-line="125"></span>WireGuard VPN
+</li>
+<li class="li ul-li list-dash-li compact-li" data-line="126"><span data-line="126"></span>Zinc crypto library for Linux
+</li>
+<li class="li ul-li list-dash-li compact-li" data-line="127"><span data-line="127"></span>Tezos and Concordium blockchains
+</li>
+<li class="li ul-li list-dash-li compact-li" data-line="128"><span data-line="128"></span>&#8230;<span data-line="128"></span>
+</li></ul></li></ul>
+<!-------------------------------------------------------------------------------->
+
+
+</section>
+<section id="sec-a-first-taste" class="section section2" data-section-depth="2" data-line="132"><h3 id="heading-sec-a-first-taste" class="h2" data-heading-depth="2" style="display:block">A first taste</h3>
+<ul class="ul list-star loose" data-line="134">
+<li class="li ul-li list-star-li loose-li fragment" data-line="134">
+<p data-line="134"><span data-line="134"></span>Write ML-like code
+</p>
+<pre class="para-block pre-fenced pre-fenced3 language-fstar lang-fstar fstar colorized" data-line="135" data-line-first="136" style="display:block"><code data-line="136"><span style="color:blue">let</span> <span style="color:blue">rec</span> factorial n = 
+  <span style="color:blue">if</span> n = <span class="constant" style="color:purple">0</span> <span style="color:blue">then</span> <span class="constant" style="color:purple">1</span> 
+  <span style="color:blue">else</span> n * factorial (n - <span class="constant" style="color:purple">1</span>)</code></pre></li>
+<li class="li ul-li list-star-li loose-li fragment" data-line="141">
+<p data-line="141"><span data-line="141"></span>Give it a specification, claiming that <span data-line="141"></span><code class="code code1 language-fstarlang lang-fstarlang fstarlang colorized">factorial</code><span data-line="141"></span> is a
+total function from non-negative to positive integers.<span data-line="142"></span> <span data-line="142"></span> 
+</p>
+<pre class="para-block pre-fenced pre-fenced3 language-fstar lang-fstar fstar colorized" data-line="143" data-line-first="144" style="display:block"><code data-line="144"><span style="color:blue">val</span> factorial<span style="color:teal">:</span> <span style="color:teal">n</span><span style="color:teal">:</span><span style="color:teal">int</span><span style="color:teal">{</span><span style="color:teal">n</span> <span style="color:teal">&gt;=</span> <span style="color:teal">0</span><span style="color:teal">}</span> <span style="color:teal">-&gt;</span> <span style="color:teal">i</span><span style="color:teal">:</span><span style="color:teal">int</span><span style="color:teal">{</span><span style="color:teal">i</span> <span style="color:teal">&gt;=</span> <span style="color:teal">1</span><span style="color:teal">}</span></code></pre></li>
+<li class="li ul-li list-star-li loose-li fragment" data-line="147">
+<p data-line="147"><span data-line="147"></span>Ask F<span data-line="147"></span>*<span data-line="147"></span> to check it
+</p>
+<pre class="para-block pre-fenced pre-fenced3 language-fstarlang lang-fstarlang fstarlang colorized" data-line="148" data-line-first="149" style="display:block"><code data-line="149">fstar factorial.fst
+Verified <span style="color:blue">module</span>: Factorial
+All verification conditions discharged successfully</code></pre></li></ul>
+<!-------------------------------------------------------------------------------->
+
+
+</section>
+<section class="slide section" data-line="156">
+<pre class="para-block pre-fenced pre-fenced3 language-c lang-c c" data-line="157" data-line-first="158" style="display:block"><code data-line="158">fstar factorial.fst
+Verified module: Factorial
+All verification conditions discharged successfully</code></pre><h5 id="sec-f--builds-a-typing-derivation-of-the-form-" class="h4" data-line="163" data-heading-depth="4" style="display:block"><span data-line="163"></span>F<span data-line="163"></span>*<span data-line="163"></span> builds a typing derivation of the form:</h5>
+<p class="p noindent" data-line="165"><span data-line="165"></span><svg  class="math-inline math-render-svg math" style="vertical-align:-0.6089em;height:1.3378em;width:19.2775em" viewBox='34.67 54.718 183.595 12.741'><desc>$\Gamma_{\mbox{prelude}} \vdash \mbox{\texttt{let factorial n = e}} : t \Leftarrow \phi$</desc><g id='math-b7cc7c'><use x='34.869' y='61.836' xlink:href='#g3-0'/><use x='41.096' y='65.323' xlink:href='#g3-112'/><use x='46.631' y='65.323' xlink:href='#g3-114'/><use x='50.533' y='65.323' xlink:href='#g3-101'/><use x='54.961' y='65.323' xlink:href='#g3-108'/><use x='57.728' y='65.323' xlink:href='#g3-117'/><use x='63.263' y='65.323' xlink:href='#g3-100'/><use x='68.798' y='65.323' xlink:href='#g3-101'/><use x='76.491' y='61.836' xlink:href='#g1-96'/><use x='85.347' y='61.836' xlink:href='#g0-108'/><use x='90.577' y='61.836' xlink:href='#g0-101'/><use x='95.807' y='61.836' xlink:href='#g0-116'/><use x='106.268' y='61.836' xlink:href='#g0-102'/><use x='111.498' y='61.836' xlink:href='#g0-97'/><use x='116.729' y='61.836' xlink:href='#g0-99'/><use x='121.959' y='61.836' xlink:href='#g0-116'/><use x='127.189' y='61.836' xlink:href='#g0-111'/><use x='132.42' y='61.836' xlink:href='#g0-114'/><use x='137.65' y='61.836' xlink:href='#g0-105'/><use x='142.88' y='61.836' xlink:href='#g0-97'/><use x='148.111' y='61.836' xlink:href='#g0-108'/><use x='158.571' y='61.836' xlink:href='#g0-110'/><use x='169.032' y='61.836' xlink:href='#g0-61'/><use x='179.493' y='61.836' xlink:href='#g0-101'/><use x='187.49' y='61.836' xlink:href='#g3-58'/><use x='193.025' y='61.836' xlink:href='#g2-116'/><use x='199.39' y='61.836' xlink:href='#g1-40'/><use x='212.12' y='61.836' xlink:href='#g2-30'/></g></svg><span data-line="165"></span>
+</p>
+<ul class="ul list-dash loose" data-line="167">
+<li class="li ul-li list-dash-li loose-li" data-line="167">
+<p data-line="167"><span data-line="167"></span>In a context <span data-line="167"></span><svg  class="math-inline math-render-svg math" style="vertical-align:-0.6091em;height:1.3262em;width:4.1226em" viewBox='88.468 54.829 39.263 12.63'><desc>$\Gamma_{\mbox{prelude}}$</desc><g id='math-9df8eb'><use x='88.667' y='61.836' xlink:href='#g3-0'/><use x='94.894' y='65.323' xlink:href='#g3-112'/><use x='100.429' y='65.323' xlink:href='#g3-114'/><use x='104.331' y='65.323' xlink:href='#g3-101'/><use x='108.759' y='65.323' xlink:href='#g3-108'/><use x='111.526' y='65.323' xlink:href='#g3-117'/><use x='117.061' y='65.323' xlink:href='#g3-100'/><use x='122.596' y='65.323' xlink:href='#g3-101'/></g></svg><span data-line="167"></span> including definitions of F<span data-line="167"></span>*<span data-line="167"></span> primitives
+</p></li>
+<li class="li ul-li list-dash-li loose-li" data-line="169">
+<p data-line="169"><span data-line="169"></span>The program <span data-line="169"></span><svg  class="math-inline math-render-svg math" style="vertical-align:-0.0210em;height:0.6811em;width:10.4774em" viewBox='34.67 55.548 99.785 6.487'><desc>$\mbox{\texttt{let factorial n = e}}$</desc><g id='math-5b7bc9'><use x='34.869' y='61.836' xlink:href='#g0-108'/><use x='40.1' y='61.836' xlink:href='#g0-101'/><use x='45.33' y='61.836' xlink:href='#g0-116'/><use x='55.791' y='61.836' xlink:href='#g0-102'/><use x='61.021' y='61.836' xlink:href='#g0-97'/><use x='66.251' y='61.836' xlink:href='#g0-99'/><use x='71.482' y='61.836' xlink:href='#g0-116'/><use x='76.712' y='61.836' xlink:href='#g0-111'/><use x='81.942' y='61.836' xlink:href='#g0-114'/><use x='87.173' y='61.836' xlink:href='#g0-105'/><use x='92.403' y='61.836' xlink:href='#g0-97'/><use x='97.633' y='61.836' xlink:href='#g0-108'/><use x='108.094' y='61.836' xlink:href='#g0-110'/><use x='118.555' y='61.836' xlink:href='#g0-61'/><use x='129.015' y='61.836' xlink:href='#g0-101'/></g></svg><span data-line="169"></span> has type <span data-line="169"></span><svg  class="math-inline math-render-svg math" style="vertical-align:-0.0210em;height:0.6852em;width:0.4206em" viewBox='34.67 55.509 4.006 6.526'><desc>$t$</desc><g id='math-e358ef'><use x='34.869' y='61.836' xlink:href='#g2-116'/></g></svg><span data-line="169"></span>,
+given the validity of a logical formula <span data-line="170"></span><svg  class="math-inline math-render-svg math" style="vertical-align:-0.2336em;height:0.9717em;width:0.6662em" viewBox='88.468 54.718 6.345 9.254'><desc>$\phi$</desc><g id='math-1ed346'><use x='88.667' y='61.836' xlink:href='#g2-30'/></g></svg><span data-line="170"></span>
+</p></li>
+<li class="li ul-li list-dash-li loose-li" data-line="172">
+<p data-line="172"><span data-line="172"></span><svg  class="math-inline math-render-svg math" style="vertical-align:-0.2336em;height:0.9717em;width:0.6662em" viewBox='88.468 54.718 6.345 9.254'><desc>$\phi$</desc><g id='math-1ed346'><use x='88.667' y='61.836' xlink:href='#g2-30'/></g></svg><span data-line="172"></span> is passed to<span data-line="172"></span>&nbsp;<a href="http://research.microsoft.com/z3" data-linkid="z3">Z3</a><span data-line="172"></span> (an automated theorem
+prover/SMT solver) to check for validity
+</p></li>
+<li class="li ul-li list-dash-li loose-li" data-line="175">
+<p data-line="175"><span data-line="175"></span>If the check succeds, then, from the metatheory of F<span data-line="175"></span>*<span data-line="175"></span>, the program is
+safe at type <span data-line="176"></span><svg  class="math-inline math-render-svg math" style="vertical-align:-0.0210em;height:0.6852em;width:0.4206em" viewBox='34.67 55.509 4.006 6.526'><desc>$t$</desc><g id='math-e358ef'><use x='34.869' y='61.836' xlink:href='#g2-116'/></g></svg><span data-line="176"></span>
+</p></li></ul>
+</section><!---------------------------------------------------------------------------->
+
+
+
+<section id="sec-refinement-types" class="section section2" data-section-depth="2" data-line="183"><h3 id="heading-sec-refinement-types" class="h2" data-heading-depth="2" style="display:block">Refinement types</h3>
+<pre class="para-block pre-fenced pre-fenced3 language-fstarlang lang-fstarlang fstarlang colorized" data-line="185" data-line-first="186" style="display:block"><code data-line="186"><span style="color:blue">type</span> nat = x:int{x&gt;=<span class="constant" style="color:purple">0</span>}</code></pre>
+<ul class="ul list-star loose" data-line="188">
+<li class="li ul-li list-star-li loose-li fragment" data-line="188">
+<p data-line="188"><span data-line="188"></span>Refinements introduced by type annotations (code unchanged)
+</p>
+<pre class="para-block pre-fenced pre-fenced3 language-fstarlang lang-fstarlang fstarlang colorized" data-line="189" data-line-first="190" style="display:block"><code data-line="190"><span style="color:blue">let</span> <span style="color:blue">rec</span> factorial (n:nat) : nat = <span style="color:blue">if</span> n = <span class="constant" style="color:purple">0</span> <span style="color:blue">then</span> <span class="constant" style="color:purple">1</span> <span style="color:blue">else</span> n * (factorial (n - <span class="constant" style="color:purple">1</span>))
+</code></pre></li>
+<li class="li ul-li list-star-li loose-li fragment" data-line="194">
+<p data-line="194"><span data-line="194"></span>Logical obligations discharged by SMT (simplified)
+</p>
+<pre class="para-block pre-fenced pre-fenced3 language-text lang-text text" data-line="195" data-line-first="196" style="display:block"><code data-line="196">n &gt;= 0, n &lt;&gt; 0 |= n - 1 &gt;= 0
+n &gt;= 0, n &lt;&gt; 0, factorial (n - 1) &gt;= 0 |= n * (factorial (n - 1)) &gt;= 0</code></pre></li>
+<li class="li ul-li list-star-li loose-li fragment" data-line="200">
+<p data-line="200"><span data-line="200"></span>Refinements eliminated by <span data-line="200"></span><strong class="strong-star2">subtyping</strong><span data-line="200"></span>: <span data-line="200"></span><code class="code code1 language-fstarlang lang-fstarlang fstarlang colorized">nat&lt;:int</code><span data-line="200"></span>
+</p>
+<pre class="para-block pre-fenced pre-fenced3 language-fstarlang lang-fstarlang fstarlang colorized" data-line="201" data-line-first="202" style="display:block"><code data-line="202"><span style="color:blue">let</span> i : int = factorial <span class="constant" style="color:purple">42</span>
+<span style="color:blue">let</span> f : x:nat{x&gt;<span class="constant" style="color:purple">0</span>} <span style="color:blue">-&gt;</span> int = factorial</code></pre></li></ul>
+<!------------------------------------------------------------------------------>
+
+
+</section>
+<section id="sec-dependent-types" class="section section2" data-section-depth="2" data-line="208"><h3 id="heading-sec-dependent-types" class="h2" data-heading-depth="2" style="display:block">Dependent types</h3>
+<ul class="ul list-star loose" data-line="210">
+<li class="li ul-li list-star-li loose-li" data-line="210">
+<p data-line="210"><span data-line="210"></span>Dependent function types (<span data-line="210"></span><svg  class="math-inline math-render-svg math" style="vertical-align:-0.0210em;height:0.7566em;width:0.8274em" viewBox='88.468 54.829 7.88 7.206'><desc>$\Pi$</desc><g id='math-d744af'><use x='88.667' y='61.836' xlink:href='#g3-5'/></g></svg><span data-line="210"></span>), here together with refinements:
+</p>
+<pre class="para-block pre-fenced pre-fenced3 language-fstarlang lang-fstarlang fstarlang colorized" data-line="211" data-line-first="212" style="display:block"><code data-line="212"><span style="color:blue">val</span> incr : x:int <span style="color:blue">-&gt;</span> y:int{x &lt; y}
+<span style="color:blue">let</span> incr x = x + <span class="constant" style="color:purple">1</span></code></pre></li>
+<li class="li ul-li list-star-li loose-li fragment" data-line="216">
+<p data-line="216"><span data-line="216"></span>Can express pre- and post- conditions of pure functions
+</p>
+<pre class="para-block pre-fenced pre-fenced3 language-fstarlang lang-fstarlang fstarlang colorized" data-line="217" data-line-first="218" style="display:block"><code data-line="218"><span style="color:blue">val</span> incr : x:int <span style="color:blue">-&gt;</span> y:int{y = x + <span class="constant" style="color:purple">1</span>}</code></pre></li>
+<li class="li ul-li list-star-li loose-li fragment" data-line="221">
+<p data-line="221"><span data-line="221"></span>Exercise: Can you find other types for <span data-line="221"></span><code class="code code1 language-fstarlang lang-fstarlang fstarlang colorized">incr</code><span data-line="221"></span>?
+</p></li></ul>
+<!-------------------------------------------------------------------------------->
+
+
+</section>
+<section id="sec-inductive-types-and-pattern-matching" class="section section2" data-section-depth="2" data-line="225"><h3 id="heading-sec-inductive-types-and-pattern-matching" class="h2" data-heading-depth="2" style="display:block">Inductive types and pattern matching</h3>
+<ul class="ul list-star loose" data-line="227">
+<li class="li ul-li list-star-li loose-li fragment" data-line="227">
+<p data-line="227"><span data-line="227"></span>Inductive datatypes (immutable) and pattern matching
+</p>
+<pre class="para-block pre-fenced pre-fenced3 language-fstarlang lang-fstarlang fstarlang colorized" data-line="228" data-line-first="229" style="display:block"><code data-line="229"><span style="color:blue">type</span> list a =
+  | Nil  : list a
+  | Cons : hd:a <span style="color:blue">-&gt;</span> tl:list a <span style="color:blue">-&gt;</span> list a
+
+<span style="color:blue">let</span> <span style="color:blue">rec</span> map (f:a <span style="color:blue">-&gt;</span> b) (x:list a) : list b =
+  <span style="color:blue">match</span> x <span style="color:blue">with</span>
+  | [] <span style="color:blue">-&gt;</span> []
+  | h :: t <span style="color:blue">-&gt;</span> f h :: map f t</code></pre></li>
+<li class="li ul-li list-star-li loose-li fragment" data-line="239">
+<p data-line="239"><span data-line="239"></span>Lambdas (unnamed, first-class functions)
+</p>
+<pre class="para-block pre-fenced pre-fenced3 language-fstarlang lang-fstarlang fstarlang colorized" data-line="240" data-line-first="241" style="display:block"><code data-line="241">map (<span style="color:blue">fun</span> x <span style="color:blue">-&gt;</span> x + <span class="constant" style="color:purple">42</span>) [<span class="constant" style="color:purple">1</span>;<span class="constant" style="color:purple">2</span>;<span class="constant" style="color:purple">3</span>]</code></pre></li></ul>
+<!-------------------------------------------------------------------------------->
+
+
+</section>
+<section id="sec-inductive-types-and-pattern-matching" class="section section2" data-section-depth="2" data-line="246"><h3 id="heading-sec-inductive-types-and-pattern-matching" class="h2" data-heading-depth="2" style="display:block">Inductive types and pattern matching</h3>
+<ul class="ul list-star loose" data-line="248">
+<li class="li ul-li list-star-li loose-li fragment" data-line="248">
+<p data-line="248"><span data-line="248"></span>Recursive functions over inductive datatypes
+</p>
+<pre class="para-block pre-fenced pre-fenced3 language-fstarlang lang-fstarlang fstarlang colorized" data-line="249" data-line-first="250" style="display:block"><code data-line="250"><span style="color:blue">type</span> vec a : nat <span style="color:blue">-&gt;</span> <span style="color:blue">Type</span> =
+  | Nil : vec a <span class="constant" style="color:purple">0</span>
+  | Cons : #n:nat <span style="color:blue">-&gt;</span> hd:a <span style="color:blue">-&gt;</span> tl:vec a n <span style="color:blue">-&gt;</span> vec a (n + <span class="constant" style="color:purple">1</span>)
+
+<span style="color:blue">let</span> <span style="color:blue">rec</span> append (v1:vec a n) (v2:vec a m) 
+  : vec a (n + m) =
+  <span style="color:blue">match</span> v1 <span style="color:blue">with</span>
+  | Nil <span style="color:blue">-&gt;</span> v2
+  | Cons hd tl <span style="color:blue">-&gt;</span> Cons hd (append tl v2)</code></pre></li>
+<li class="li ul-li list-star-li loose-li fragment" data-line="261">
+<p data-line="261"><span data-line="261"></span>Higher order 
+</p>
+<pre class="para-block pre-fenced pre-fenced3 language-fstarlang lang-fstarlang fstarlang colorized" data-line="262" data-line-first="263" style="display:block"><code data-line="263">  <span style="color:blue">let</span> <span style="color:blue">rec</span> map (f:a <span style="color:blue">-&gt;</span> b) (v:vec a n) 
+    : vec b n 
+    = <span style="color:blue">match</span> v <span style="color:blue">with</span>
+      | Nil <span style="color:blue">-&gt;</span> Nil
+      | Cons hd tl <span style="color:blue">-&gt;</span> Cons (f hd) (map f tl)
+
+  map (<span style="color:blue">fun</span> x <span style="color:blue">-&gt;</span> x + <span class="constant" style="color:purple">42</span>) (Cons <span class="constant" style="color:purple">1</span> Nil)</code></pre></li></ul>
+<!------------------------------------------------------------------------------>
+
+
+</section>
+<section id="sec-total-functions-in-f-" class="section section2" data-section-depth="2" data-line="275"><h3 id="heading-sec-total-functions-in-f-" class="h2" data-heading-depth="2" style="display:block">Total functions in F*</h3>
+<ul class="ul list-star loose" data-line="277">
+<li class="li ul-li list-star-li loose-li" data-line="277">
+<p data-line="277"><span data-line="277"></span>The F<span data-line="277"></span>*<span data-line="277"></span> functions we saw so far were all <span data-line="277"></span><strong class="strong-star2">total</strong><span data-line="277"></span>
+</p></li>
+<li class="li ul-li list-star-li loose-li" data-line="279">
+<p data-line="279"><span data-line="279"></span><code class="code code1 language-fstarlang lang-fstarlang fstarlang colorized"><span style="color:blue">Tot</span></code><span data-line="279"></span> effect (default) = no side-effects, terminates on all inputs
+</p>
+<ul class="ul list-dash compact" data-line="280">
+<li class="li ul-li list-dash-li compact-li" data-line="280"><span data-line="280"></span><code class="code code1 language-fstarlang lang-fstarlang fstarlang colorized">a <span style="color:blue">-&gt;</span> b</code><span data-line="280"></span> is really shorthand for <span data-line="280"></span><code class="code code1 language-fstarlang lang-fstarlang fstarlang colorized">a <span style="color:blue">-&gt;</span> <span style="color:blue">Tot</span> b</code><span data-line="280"></span>
+</li></ul>
+
+<pre class="para-block pre-fenced pre-fenced3 language-fstarlang lang-fstarlang fstarlang colorized" data-line="282" data-line-first="283" style="display:block"><code data-line="283"><span style="color:blue">val</span> factorial : nat <span style="color:blue">-&gt;</span> nat ~ nat <span style="color:blue">-&gt;</span> <span style="color:blue">Tot</span> nat
+<span style="color:blue">let</span> <span style="color:blue">rec</span> factorial n = (<span style="color:blue">if</span> n = <span class="constant" style="color:purple">0</span> <span style="color:blue">then</span> <span class="constant" style="color:purple">1</span> <span style="color:blue">else</span> n * (factorial (n - <span class="constant" style="color:purple">1</span>)))</code></pre></li>
+<li class="li ul-li list-star-li loose-li fragment" data-line="287">
+<p data-line="287"><span data-line="287"></span>Quiz: How about giving this weak type to factorial?
+</p>
+<pre class="para-block pre-fenced pre-fenced3 language-fstarlang lang-fstarlang fstarlang colorized" data-line="288" data-line-first="289" style="display:block"><code data-line="289"><span style="color:blue">val</span> factorial : int <span style="color:blue">-&gt;</span> <span style="color:blue">Tot</span> int</code></pre></li></ul>
+
+<div class="fragment console" data-line="292">
+<pre class="para-block pre-fenced pre-fenced3 language-text lang-text text" data-line="293" data-line-first="294" style="display:block"><code data-line="294">  let rec factorial n = (if n = 0 then 1 else n * (factorial (n - 1)))
+                                                              ^^^^^
+  Could not prove termination of this recursive call</code></pre>
+<p class="p noindent para-continued" data-line="298"><span data-line="298"></span>  <span data-line="298"></span><code class="code code1 language-fstarlang lang-fstarlang fstarlang colorized">factorial (-<span class="constant" style="color:purple">1</span>)</code><span data-line="298"></span> loops! (<span data-line="298"></span><code class="code code1 language-fstarlang lang-fstarlang fstarlang colorized">int</code><span data-line="298"></span> type in F<span data-line="298"></span>*<span data-line="298"></span> is unbounded)</p></div></section>
+<section id="sec-semantic-termination-checking" class="section section2" data-section-depth="2" data-line="301"><h3 id="heading-sec-semantic-termination-checking" class="h2" data-heading-depth="2" style="display:block">Semantic termination checking</h3>
+<ul class="ul list-star compact" data-line="303">
+<li class="li ul-li list-star-li compact-li" data-line="303"><span data-line="303"></span>Based on <span data-line="303"></span><strong class="strong-star2">well-founded ordering on expressions</strong><span data-line="303"></span> (<span data-line="303"></span><code class="code code1 language-fstarlang lang-fstarlang fstarlang colorized">&lt;&lt;</code><span data-line="303"></span>)
+
+<ul class="ul list-dash compact" data-line="304">
+<li class="li ul-li list-dash-li compact-li" data-line="304"><span data-line="304"></span>naturals related by <span data-line="304"></span><code class="code code1 language-fstarlang lang-fstarlang fstarlang colorized">&lt;</code><span data-line="304"></span> (negative integers unrelated)
+</li>
+<li class="li ul-li list-dash-li compact-li" data-line="305"><span data-line="305"></span>inductives related by subterm ordering
+</li>
+<li class="li ul-li list-dash-li compact-li" data-line="306"><span data-line="306"></span>lex tuples <span data-line="306"></span><code class="code code1 language-fstarlang lang-fstarlang fstarlang colorized">%[a;b;c]</code><span data-line="306"></span> with lexicographic ordering
+</li>
+<li class="li ul-li list-dash-li compact-li" data-line="307"><span data-line="307"></span>result of a total function smaller than the function itself (<span data-line="307"></span><code class="code code1 language-fstarlang lang-fstarlang fstarlang colorized">f x &lt;&lt; f</code><span data-line="307"></span>)
+</li></ul>
+</li>
+<li class="li ul-li list-star-li compact-li fragment" data-line="309"><span data-line="309"></span>order constraints discharged by the SMT solver
+</li>
+<li class="li ul-li list-star-li compact-li fragment" data-line="310"><span data-line="310"></span>arbitrary total expression as <span data-line="310"></span><strong class="strong-star2">decreases metric</strong><span data-line="310"></span>
+
+<pre class="para-block pre-fenced pre-fenced3 language-fstarlang lang-fstarlang fstarlang colorized" data-line="311" data-line-first="312" style="display:block"><code data-line="312"><span style="color:blue">let</span> <span style="color:blue">rec</span> ackermann (m n:nat) : <span style="color:blue">Tot</span> nat (<span style="color:blue">decreases</span> %[m;n]) =
+  <span style="color:blue">if</span> m=<span class="constant" style="color:purple">0</span> <span style="color:blue">then</span> n + <span class="constant" style="color:purple">1</span>
+  <span style="color:blue">else</span> <span style="color:blue">if</span> n = <span class="constant" style="color:purple">0</span> <span style="color:blue">then</span> ackermann (m - <span class="constant" style="color:purple">1</span>) <span class="constant" style="color:purple">1</span>
+  <span style="color:blue">else</span> ackermann (m - <span class="constant" style="color:purple">1</span>) (ackermann m (n - <span class="constant" style="color:purple">1</span>))</code></pre></li>
+<li class="li ul-li list-star-li compact-li fragment" data-line="317"><span data-line="317"></span>default metric is lex ordering of all (non-function) args
+
+<pre class="para-block pre-fenced pre-fenced3 language-fstarlang lang-fstarlang fstarlang colorized" data-line="318" data-line-first="319" style="display:block"><code data-line="319"><span style="color:blue">val</span> ackermann: m:nat <span style="color:blue">-&gt;</span> n:nat <span style="color:blue">-&gt;</span> <span style="color:blue">Tot</span> nat</code></pre></li></ul>
+<!------------------------------------------------------------------------------->
+
+
+</section>
+<section id="sec-values-and-computations" class="section section2" data-section-depth="2" data-line="324"><h3 id="heading-sec-values-and-computations" class="h2" data-heading-depth="2" style="display:block">Values and Computations</h3>
+<ul class="ul list-star loose" data-line="326">
+<li class="li ul-li list-star-li loose-li" data-line="326">
+<p data-line="326"><span data-line="326"></span>&#8220;Values&#8221;<span data-line="326"></span> aka unconditionally total terms
+</p></li>
+<li class="li ul-li list-star-li loose-li fragment" data-line="328">
+<p data-line="328"><span data-line="328"></span><strong class="strong-star2">Two classes of types</strong><span data-line="328"></span>
+</p>
+<ul class="ul list-dash compact" data-line="329">
+<li class="li ul-li list-dash-li compact-li" data-line="329"><span data-line="329"></span>Value types (<span data-line="329"></span><code class="code code1 language-fstarlang lang-fstarlang fstarlang colorized">t</code><span data-line="329"></span>): <span data-line="329"></span><code class="code code1 language-fstarlang lang-fstarlang fstarlang colorized">int</code><span data-line="329"></span>, <span data-line="329"></span><code class="code code1 language-fstarlang lang-fstarlang fstarlang colorized">list int</code><span data-line="329"></span>, <span data-line="329"></span>&#8230;<span data-line="329"></span>
+</li>
+<li class="li ul-li list-dash-li compact-li" data-line="330"><span data-line="330"></span>Computation types (<span data-line="330"></span><code class="code code1 language-fstarlang lang-fstarlang fstarlang colorized">C</code><span data-line="330"></span>): conditionally pure, divergent, stateful, <span data-line="330"></span>&#8230;<span data-line="330"></span>
+</li></ul>
+</li>
+<li class="li ul-li list-star-li loose-li fragment" data-line="332">
+<p data-line="332"><span data-line="332"></span><strong class="strong-star2">F* effect system encapsulates effectful code</strong><span data-line="332"></span>
+</p>
+<ul class="ul list-dash compact" data-line="334">
+<li class="li ul-li list-dash-li compact-li" data-line="334"><span data-line="334"></span>Pure code cannot call effectful code
+</li>
+<li class="li ul-li list-dash-li compact-li" data-line="335"><span data-line="335"></span>But, via sub-effecting, pure code can be used in effectful contexts
+</li></ul>
+</li>
+<li class="li ul-li list-star-li loose-li fragment" data-line="337">
+<p data-line="337"><span data-line="337"></span><strong class="strong-star2">Dependent function types</strong><span data-line="337"></span> of the form: <span data-line="337"></span><code class="code code1 language-fstarlang lang-fstarlang fstarlang colorized">x:t <span style="color:blue">-&gt;</span> C</code><span data-line="337"></span>
+</p>
+<ul class="ul list-dash compact" data-line="338">
+<li class="li ul-li list-dash-li compact-li" data-line="338"><span data-line="338"></span>F<span data-line="338"></span>*<span data-line="338"></span> is call-by-value
+</li>
+<li class="li ul-li list-dash-li compact-li" data-line="339"><span data-line="339"></span>argument can<span data-line="339"></span>&#39;<span data-line="339"></span>t have side-effects, so value type
+</li></ul>
+</li>
+<li class="li ul-li list-star-li loose-li fragment" data-line="341">
+<p data-line="341"><span data-line="341"></span><strong class="strong-star2">Two forms of refinement types</strong><span data-line="341"></span>
+</p>
+<ul class="ul list-dash compact" data-line="342">
+<li class="li ul-li list-dash-li compact-li" data-line="342"><span data-line="342"></span><strong class="strong-star2">Refined value types</strong><span data-line="342"></span>: <span data-line="342"></span><code class="code code1 language-fstarlang lang-fstarlang fstarlang colorized">x:t{p}</code><span data-line="342"></span>
+</li>
+<li class="li ul-li list-dash-li compact-li" data-line="343"><span data-line="343"></span><strong class="strong-star2">Refined computation types</strong><span data-line="343"></span> <span data-line="343"></span>&#8230;<span data-line="343"></span>
+</li></ul>
+</li></ul>
+<!------------------------------------------------------------------------------>
+
+
+</section>
+<section id="sec-refined-computation-types" class="section section2" data-section-depth="2" data-line="347"><h3 id="heading-sec-refined-computation-types" class="h2" data-heading-depth="2" style="display:block">Refined Computation Types</h3></section>
+<section id="pure1" class="section section2" data-section-depth="2" data-line="350"><h3 id="heading-pure1" class="h2" data-heading-depth="2" style="display:block">Refined Computation Types</h3>
+<ul class="ul list-star loose" data-line="352">
+<li class="li ul-li list-star-li loose-li" data-line="352">
+<p data-line="352"><span data-line="352"></span>Saw this already:
+</p>
+<pre class="para-block pre-fenced pre-fenced3 language-fstarlang lang-fstarlang fstarlang colorized" data-line="353" data-line-first="354" style="display:block"><code data-line="354"><span style="color:blue">val</span> factorial : nat <span style="color:blue">-&gt;</span> <span style="color:blue">Tot</span> nat</code></pre></li>
+<li class="li ul-li list-star-li loose-li fragment" data-line="357">
+<p data-line="357"><span data-line="357"></span>Can equivalently use pre- and post- conditions for this
+</p>
+<pre class="para-block pre-fenced pre-fenced3 language-fstarlang lang-fstarlang fstarlang colorized" data-line="358" data-line-first="359" style="display:block"><code data-line="359"><span style="color:blue">val</span> factorial : x:int <span style="color:blue">-&gt;</span> <span style="color:blue">Pure</span> int (<span style="color:blue">requires</span> (x &gt;= <span class="constant" style="color:purple">0</span>))
+                                  (<span style="color:blue">ensures</span> (<span style="color:blue">fun</span> y <span style="color:blue">-&gt;</span> y &gt;= <span class="constant" style="color:purple">0</span>))</code></pre></li>
+<li class="li ul-li list-star-li loose-li fragment" data-line="362">
+<p data-line="362"><span data-line="362"></span>Each <span data-line="362"></span><strong class="strong-star2">computation type</strong><span data-line="362"></span> contains
+</p>
+<ul class="ul list-dash compact" data-line="363">
+<li class="li ul-li list-dash-li compact-li" data-line="363"><span data-line="363"></span><em class="em-star1">effect</em><span data-line="363"></span> (<span data-line="363"></span><code class="code code1 language-fstarlang lang-fstarlang fstarlang colorized"><span style="color:blue">Pure</span></code><span data-line="363"></span>), <span data-line="363"></span><em class="em-star1">result type</em><span data-line="363"></span> (<span data-line="363"></span><code class="code code1 language-fstarlang lang-fstarlang fstarlang colorized">int</code><span data-line="363"></span>),
+ <span data-line="364"></span><em class="em-star1">spec</em><span data-line="364"></span> (e.g. pre and post)
+</li></ul></li>
+<li class="li ul-li list-star-li loose-li fragment" data-line="365">
+<p data-line="365"><span data-line="365"></span><code class="code code1 language-fstarlang lang-fstarlang fstarlang colorized"><span style="color:blue">Tot</span></code><span data-line="365"></span> can be seen as just an abbreviation
+</p>
+<pre class="para-block pre-fenced pre-fenced3 language-fstarlang lang-fstarlang fstarlang colorized" data-line="366" data-line-first="367" style="display:block"><code data-line="367"><span style="color:blue">Tot</span> t = <span style="color:blue">Pure</span> t (<span style="color:blue">requires</span> True) (<span style="color:blue">ensures</span> (<span style="color:blue">fun</span> _ <span style="color:blue">-&gt;</span> True))</code></pre></li></ul>
+<!------------------------------------------------------------------------------>
+
+
+</section>
+<section id="sec-intrinsic-vs-extrinsic-proofs" class="section section2" data-section-depth="2" data-line="372"><h3 id="heading-sec-intrinsic-vs-extrinsic-proofs" class="h2" data-heading-depth="2" style="display:block">Intrinsic vs Extrinsic Proofs</h3>
+<ul class="ul list-star compact" data-line="374">
+<li class="li ul-li list-star-li compact-li" data-line="374">
+<p data-line="374"><span data-line="374"></span>Intrinsic proof: The type of a term at the <span data-line="374"></span>&#8220;definition site&#8221;<span data-line="374"></span> expresses
+properties of interest
+</p>
+<div class="fragment" data-line="377">
+<pre class="para-block pre-fenced pre-fenced3 language-fstarlang lang-fstarlang fstarlang colorized" data-line="378" data-line-first="379" style="display:block"><code data-line="379"><span style="color:blue">let</span> <span style="color:blue">rec</span> factorial (n:nat) : <span style="color:blue">Tot</span> nat = <span style="color:blue">if</span> n = <span class="constant" style="color:purple">0</span> <span style="color:blue">then</span> <span class="constant" style="color:purple">1</span> <span style="color:blue">else</span> n * factorial (n - <span class="constant" style="color:purple">1</span>)</code></pre></div></li>
+<li class="li ul-li list-star-li compact-li fragment" data-line="383"><span data-line="383"></span>Extrinsic proof: The type of a term is relatively simple; properties
+are proven separately from the definition
+</li></ul>
+<!------------------------------------------------------------------------------>
+
+
+</section>
+<section id="pure2" class="section section2" data-section-depth="2" data-line="388"><h3 id="heading-pure2" class="h2" data-heading-depth="2" style="display:block">Lemma: Pure Computations as Extrinsic Proofs</h3>
+<pre class="para-block pre-fenced pre-fenced3 language-fstarlang lang-fstarlang fstarlang colorized" data-line="390" data-line-first="391;out/VeriCrypt2020\aux/AppendLength.fst:10" style="display:block"><code data-line="391;out/VeriCrypt2020\aux/AppendLength.fst:10"><span style="color:blue">let</span> <span style="color:blue">rec</span> append (#a:<span style="color:blue">Type</span>) (xs ys : list a) : <span style="color:blue">Tot</span> (list a) =
+  <span style="color:blue">match</span> xs <span style="color:blue">with</span>
+  | [] <span style="color:blue">-&gt;</span> ys
+  | x :: xs&#39; <span style="color:blue">-&gt;</span> x :: append xs&#39; ys</code></pre>
+<div class="fragment" data-line="393">
+<pre class="para-block pre-fenced pre-fenced3 language-fstarlang lang-fstarlang fstarlang colorized" data-line="394" data-line-first="395;out/VeriCrypt2020\aux/AppendLength.fst:25" style="display:block"><code data-line="395;out/VeriCrypt2020\aux/AppendLength.fst:25"><span style="color:blue">let</span> <span style="color:blue">rec</span> append_length (#a:<span style="color:blue">Type</span>) (xs ys : list a) :
+    <span style="color:blue">Pure</span> unit
+      (<span style="color:blue">requires</span> True)
+      (<span style="color:blue">ensures</span> (<span style="color:blue">fun</span> _ <span style="color:blue">-&gt;</span> length (append xs ys) = length xs + length ys))
+= <span style="color:blue">match</span> xs <span style="color:blue">with</span>
+  | [] <span style="color:blue">-&gt;</span> ()  <span style="color:darkgreen">(*</span><span style="color:darkgreen"> length </span><span style="color:darkgreen">(</span><span style="color:darkgreen">append [] ys) = length [] + length ys </span><span style="color:darkgreen">*)</span>
+  | x :: xs&#39; <span style="color:blue">-&gt;</span>
+    append_length xs&#39; ys
+    <span style="color:darkgreen">(*</span><span style="color:darkgreen"> Know recursive call&#39;s postcondition: length </span><span style="color:darkgreen">(</span><span style="color:darkgreen">append xs&#39; ys) = length xs&#39; + length ys </span><span style="color:darkgreen">*)</span>
+    <span style="color:darkgreen">(*</span><span style="color:darkgreen"> To show: length </span><span style="color:darkgreen">(</span><span style="color:darkgreen">append </span><span style="color:darkgreen">(</span><span style="color:darkgreen">x::xs&#39;) ys) = length </span><span style="color:darkgreen">(</span><span style="color:darkgreen">x::xs&#39;) + length ys </span><span style="color:darkgreen">*)</span>
+    <span style="color:darkgreen">(*</span><span style="color:darkgreen"> i.e. length </span><span style="color:darkgreen">(</span><span style="color:darkgreen">x::</span><span style="color:darkgreen">(</span><span style="color:darkgreen">append xs&#39; ys)) = 1 + length xs&#39; + length ys </span><span style="color:darkgreen">*)</span>
+    <span style="color:darkgreen">(*</span><span style="color:darkgreen"> i.e. 1 + length </span><span style="color:darkgreen">(</span><span style="color:darkgreen">append xs&#39; ys) = 1 + length xs&#39; + length ys </span><span style="color:darkgreen">*)</span></code></pre></div>
+<ul class="ul list-star compact" data-line="398">
+<li class="li ul-li list-star-li compact-li fragment" data-line="398"><span data-line="398"></span>Syntax sugar (<span data-line="398"></span><code class="code code1 language-fstarlang lang-fstarlang fstarlang colorized"><span style="color:blue">Lemma</span></code><span data-line="398"></span>)
+
+<pre class="para-block pre-fenced pre-fenced3 language-fstarlang lang-fstarlang fstarlang colorized" data-line="399" data-line-first="400;out/VeriCrypt2020\aux/AppendLength.fst:33" style="display:block"><code data-line="400;out/VeriCrypt2020\aux/AppendLength.fst:33"><span style="color:blue">let</span> <span style="color:blue">rec</span> append_length_lemma (#a:<span style="color:blue">Type</span>) (xs ys : list a) :
+  <span style="color:blue">Lemma</span> (<span style="color:blue">ensures</span> (length (append xs ys) = length xs + length ys))
+= <span style="color:blue">match</span> xs <span style="color:blue">with</span>
+| [] <span style="color:blue">-&gt;</span> ()
+| x :: xs&#39; <span style="color:blue">-&gt;</span> append_length_lemma xs&#39; ys</code></pre></li></ul>
+<!------------------------------------------------------------------------------>
+
+
+</section>
+<section id="sec-often-lemmas-are-unavoidable" class="section section2" data-section-depth="2" data-line="405"><h3 id="heading-sec-often-lemmas-are-unavoidable" class="h2" data-heading-depth="2" style="display:block">Often lemmas are unavoidable</h3><!-- need lemma for 3 reasons:
+- as before, this property is rather arbitrary
+- this property is "relational" (2 calls to reverse)
+- proof doesn't follow the structure of the program
+-->
+
+
+<pre class="para-block pre-fenced pre-fenced3 language-fstarlang lang-fstarlang fstarlang colorized" data-line="411" data-line-first="412" style="display:block"><code data-line="412"><span style="color:blue">let</span> snoc l h = l @ [h]
+
+<span style="color:blue">let</span> <span style="color:blue">rec</span> reverse (#a:<span style="color:blue">Type</span>) (l:list a) : <span style="color:blue">Tot</span> (list a) =
+  <span style="color:blue">match</span> l <span style="color:blue">with</span>
+  | [] <span style="color:blue">-&gt;</span> []
+  | hd::tl <span style="color:blue">-&gt;</span> snoc (reverse tl) hd</code></pre>
+<div class="fragment" data-line="419">
+<pre class="para-block pre-fenced pre-fenced3 language-fstarlang lang-fstarlang fstarlang colorized" data-line="420" data-line-first="421" style="display:block"><code data-line="421"><span style="color:blue">let</span> <span style="color:blue">rec</span> rev_snoc #a (l:list a) (h:a)
+    : <span style="color:blue">Lemma</span> (reverse (snoc l h) == h::reverse l) =
+    <span style="color:blue">match</span> l <span style="color:blue">with</span>
+    | [] <span style="color:blue">-&gt;</span> ()
+    | hd::tl <span style="color:blue">-&gt;</span> rev_snoc tl h</code></pre></div>
+<pre class="para-block pre-fenced pre-fenced3 language-fstarlang lang-fstarlang fstarlang colorized" data-line="428" data-line-first="429" style="display:block"><code data-line="429"><span style="color:blue">let</span> <span style="color:blue">rec</span> rev_involutive #a (l:list a)
+    : <span style="color:blue">Lemma</span> (reverse (reverse l) == l) =
+    <span style="color:blue">match</span> l <span style="color:blue">with</span>
+    | [] <span style="color:blue">-&gt;</span> ()
+    | hd::tl <span style="color:blue">-&gt;</span> rev_involutive tl; rev_snoc (reverse tl) hd</code></pre><!------------------------------------------------------------------------------>
+
+
+</section>
+<section id="sec-often-lemmas-are-unavoidable-but-smt-patterns-may-help" class="section section2" data-section-depth="2" data-line="438"><h3 id="heading-sec-often-lemmas-are-unavoidable-but-smt-patterns-may-help" class="h2" data-heading-depth="2" style="display:block">Often lemmas are unavoidable, but SMT patterns may help</h3>
+<pre class="para-block pre-fenced pre-fenced3 language-fstarlang lang-fstarlang fstarlang colorized" data-line="439" data-line-first="440" style="display:block"><code data-line="440"><span style="color:blue">let</span> snoc l h = l @ [h]
+
+<span style="color:blue">let</span> <span style="color:blue">rec</span> reverse (#a:<span style="color:blue">Type</span>) (l:list a) : <span style="color:blue">Tot</span> (list a) =
+  <span style="color:blue">match</span> l <span style="color:blue">with</span>
+  | [] <span style="color:blue">-&gt;</span> []
+  | hd::tl <span style="color:blue">-&gt;</span> snoc (reverse tl) hd</code></pre>
+<div class="fragment" data-line="447">
+<pre class="para-block pre-fenced pre-fenced3 language-fstarlang lang-fstarlang fstarlang colorized" data-line="448" data-line-first="449" style="display:block"><code data-line="449"><span style="color:blue">let</span> <span style="color:blue">rec</span> rev_snoc #a (l:list a) (h:a)
+    : <span style="color:blue">Lemma</span> (reverse (snoc l h) == h::reverse l)
+            [SMTPat (reverse (snoc l h))] =
+    <span style="color:blue">match</span> l <span style="color:blue">with</span>
+    | [] <span style="color:blue">-&gt;</span> ()
+    | hd::tl <span style="color:blue">-&gt;</span> rev_snoc tl h</code></pre></div>
+<pre class="para-block pre-fenced pre-fenced3 language-fstarlang lang-fstarlang fstarlang colorized" data-line="457" data-line-first="458" style="display:block"><code data-line="458"><span style="color:blue">let</span> <span style="color:blue">rec</span> rev_involutive #a (l:list a)
+    : <span style="color:blue">Lemma</span> (reverse (reverse l) == l) =
+    <span style="color:blue">match</span> l <span style="color:blue">with</span>
+    | [] <span style="color:blue">-&gt;</span> ()
+    | hd::tl <span style="color:blue">-&gt;</span> rev_involutive tl  <span style="color:darkgreen">(*</span><span style="color:darkgreen">; rev_snoc </span><span style="color:darkgreen">(</span><span style="color:darkgreen">reverse tl) hd </span><span style="color:darkgreen">*)</span></code></pre><!------------------------------------------------------------------------------>
+
+
+</section>
+<section id="sec-exercise-1--summing--0-1-2-3-" class="section section2" data-section-depth="2" data-line="467"><h3 id="heading-sec-exercise-1--summing--0-1-2-3-" class="h2" data-heading-depth="2" style="display:block">Exercise 1: Summing: 0 + 1 + 2 + 3 + &#8230;</h3>
+<pre class="para-block pre-fenced pre-fenced3 language-fstarlang lang-fstarlang fstarlang colorized" data-line="468" data-line-first="469;out/VeriCrypt2020\aux/Sum.fst:1" style="display:block"><code data-line="469;out/VeriCrypt2020\aux/Sum.fst:1"><span style="color:blue">module</span> Sum
+
+<span style="color:blue">open</span> FStar.Mul
+
+<span style="color:blue">let</span> <span style="color:blue">rec</span> sum_rec (n:nat) : nat =
+  <span style="color:blue">if</span> n = <span class="constant" style="color:purple">0</span> <span style="color:blue">then</span> <span class="constant" style="color:purple">0</span>
+  <span style="color:blue">else</span> n + sum_rec (n - <span class="constant" style="color:purple">1</span>)
+
+<span style="color:blue">let</span> sum (n:nat) : nat = (n * (n + <span class="constant" style="color:purple">1</span>)) / <span class="constant" style="color:purple">2</span>
+
+<span style="color:darkgreen">(*</span>
+<span style="color:darkgreen"> </span><span style="color:darkgreen">*</span><span style="color:darkgreen"> Exercise: remove the admit and complete the proof</span>
+<span style="color:darkgreen"> </span><span style="color:darkgreen">*)</span>
+
+<span style="color:blue">let</span> sum_rec_correct_lemma (n:nat)
+  : <span style="color:blue">Lemma</span> (sum_rec n == sum n)
+  = admit ()
+</code></pre><!------------------------------------------------------------------------------>
+
+
+</section>
+<section id="pure3" class="section section2" data-section-depth="2" data-line="474"><h3 id="heading-pure3" class="h2" data-heading-depth="2" style="display:block">Verifying pure programs</h3><h4 id="sec-variant-3--extrinsically-using-proof-terms" class="h3" data-line="475" data-heading-depth="3" style="display:block"><span data-line="475"></span>Variant <span data-line="475"></span>#<span data-line="475"></span>3: extrinsically using proof terms</h4>
+<pre class="para-block pre-fenced pre-fenced3 language-fstarlang lang-fstarlang fstarlang colorized" data-line="477" data-line-first="478" style="display:block"><code data-line="478"><span style="color:blue">let</span> <span style="color:blue">rec</span> preservation (#e #e&#39;:exp) (#g:env) (#t:typ)
+                     (ht:typing g e t)
+                     (hs:step e e&#39;)
+    : <span style="color:blue">Tot</span> (typing g e&#39; t) (<span style="color:blue">decreases</span> ht) =
+    <span style="color:blue">match</span> hs <span style="color:blue">with</span>
+    | SBeta tx e1&#39; e2&#39; <span style="color:blue">-&gt;</span> substitution_beta h2 (TyLam?.hbody h1)
+    | SApp1 e2&#39; hs1   <span style="color:blue">-&gt;</span> TyApp (preservation h1 hs1) h2
+    | SApp2 e1&#39; hs2   <span style="color:blue">-&gt;</span> TyApp h1 (preservation h2 hs2)</code></pre>
+<div class="fragment" data-line="488">
+<pre class="para-block pre-fenced pre-fenced3 language-fstarlang lang-fstarlang fstarlang colorized" data-line="489" data-line-first="490" style="display:block"><code data-line="490"><span style="color:blue">let</span> <span style="color:blue">rec</span> progress (#e:exp) (#t:typ) 
+                 (h:typing empty e t)
+    : <span style="color:blue">Pure</span> (e&#39;:exp &amp; step e e&#39;)
+           (<span style="color:blue">requires</span> (~ (is_value e)))
+           (<span style="color:blue">ensures</span> (<span style="color:blue">fun</span> _ <span style="color:blue">-&gt;</span> True)) (<span style="color:blue">decreases</span> h) =
+    <span style="color:blue">match</span> h <span style="color:blue">with</span>
+    | TyApp #g #e1 #e2 #t11 #t12 h1 h2 <span style="color:blue">-&gt;</span>
+       <span style="color:blue">match</span> e1 <span style="color:blue">with</span>
+       | ELam t e1&#39; <span style="color:blue">-&gt;</span> (| subst (sub_beta e2) e1&#39;, SBeta t e1&#39; e2 |)
+       | _          <span style="color:blue">-&gt;</span> <span style="color:blue">let</span> ExIntro e1&#39; h1&#39; = progress h1 <span style="color:blue">in</span>
+                       (| EApp e1&#39; e2, SApp1 e2 h1&#39; |)a</code></pre></div>
+<ul class="ul list-star compact" data-line="504">
+<li class="li ul-li list-star-li compact-li fragment" data-line="504"><span data-line="504"></span><strong class="strong-star2">Note:</strong><span data-line="504"></span> match exhaustiveness check also semantic (via SMT)
+</li></ul>
+<!------------------------------------------------------------------------------>
+
+
+</section>
+<section id="sec-enforcing-abstractions-via-interfaces" class="section section2" data-section-depth="2" data-line="509"><h3 id="heading-sec-enforcing-abstractions-via-interfaces" class="h2" data-heading-depth="2" style="display:block">Enforcing abstractions via Interfaces</h3>
+<p class="p noindent" data-line="510"><span data-line="510"></span><code class="code code1 language-fstarlang lang-fstarlang fstarlang colorized"><span style="color:blue">Stack</span>.fsti</code><span data-line="510"></span>
+</p>
+<pre class="para-block pre-fenced pre-fenced3 language-fstarlang lang-fstarlang fstarlang colorized" data-line="511" data-line-first="512;out/VeriCrypt2020\aux/Stack.fsti:1" style="display:block"><code data-line="512;out/VeriCrypt2020\aux/Stack.fsti:1"><span style="color:blue">module</span> <span style="color:blue">Stack</span>
+
+<span style="color:blue">val</span> stack : <span style="color:blue">Type0</span>
+
+<span style="color:blue">val</span> empty : stack
+
+<span style="color:blue">val</span> is_empty (s:stack) : bool
+
+<span style="color:blue">val</span> push (s:stack) (x:int) : stack
+
+<span style="color:blue">val</span> pop (s:stack{~ (is_empty s)}) : stack
+
+<span style="color:blue">val</span> top (s:stack{~ (is_empty s)}) : int
+</code></pre></section>
+<section id="sec-a-client-of-this-interface" class="section section2" data-section-depth="2" data-line="515"><h3 id="heading-sec-a-client-of-this-interface" class="h2" data-heading-depth="2" style="display:block">A client of this interface</h3>
+<p class="p noindent" data-line="516"><span data-line="516"></span><code class="code code1 language-fstarlang lang-fstarlang fstarlang colorized">StackClient.fst</code><span data-line="516"></span>
+</p>
+<pre class="para-block pre-fenced pre-fenced3 language-fstarlang lang-fstarlang fstarlang colorized" data-line="517" data-line-first="518;out/VeriCrypt2020\aux/StackClient.fst:1" style="display:block"><code data-line="518;out/VeriCrypt2020\aux/StackClient.fst:1"><span style="color:blue">module</span> StackClient
+
+<span style="color:blue">open</span> <span style="color:blue">Stack</span>
+
+<span style="color:blue">let</span> some_function (s:stack) = <span style="color:blue">if</span> is_empty s <span style="color:blue">then</span> ...
+</code></pre></section>
+<section id="sec-an-implementation-using-lists" class="section section2" data-section-depth="2" data-line="521"><h3 id="heading-sec-an-implementation-using-lists" class="h2" data-heading-depth="2" style="display:block">An implementation using lists</h3>
+<p class="p noindent" data-line="522"><span data-line="522"></span><code class="code code1 language-fstarlang lang-fstarlang fstarlang colorized"><span style="color:blue">Stack</span>.fst</code><span data-line="522"></span>
+</p>
+<pre class="para-block pre-fenced pre-fenced3 language-fstarlang lang-fstarlang fstarlang colorized" data-line="523" data-line-first="524;out/VeriCrypt2020\aux/Stack.fst:1" style="display:block"><code data-line="524;out/VeriCrypt2020\aux/Stack.fst:1"><span style="color:blue">module</span> <span style="color:blue">Stack</span>
+
+<span style="color:blue">module</span> <span style="color:blue">Stack</span>
+
+<span style="color:blue">type</span> stack = list int
+
+<span style="color:darkgreen">(*</span>
+<span style="color:darkgreen"> </span><span style="color:darkgreen">*</span><span style="color:darkgreen"> Exercise 1 : implement the rest of the interface functions</span>
+<span style="color:darkgreen"> </span><span style="color:darkgreen">*</span><span style="color:darkgreen">              from Stack.fsti</span>
+<span style="color:darkgreen"> </span><span style="color:darkgreen">*)</span>
+
+
+<span style="color:darkgreen">(*</span>
+<span style="color:darkgreen"> </span><span style="color:darkgreen">*</span><span style="color:darkgreen"> Exercise 2 : enhance the interface Stack.fsti,</span>
+<span style="color:darkgreen"> </span><span style="color:darkgreen">*</span><span style="color:darkgreen">              and if required Stack.fst, with additional specs</span>
+<span style="color:darkgreen"> </span><span style="color:darkgreen">*</span><span style="color:darkgreen">              so that StackClient.fst verifies</span>
+<span style="color:darkgreen"> </span><span style="color:darkgreen">*)</span>
+</code></pre></section>
+<section id="sec-clients-cannot-break-abstraction" class="section section2" data-section-depth="2" data-line="527"><h3 id="heading-sec-clients-cannot-break-abstraction" class="h2" data-heading-depth="2" style="display:block">Clients cannot break abstraction</h3>
+<p class="p noindent" data-line="528"><span data-line="528"></span><code class="code code1 language-fstarlang lang-fstarlang fstarlang colorized">StackClientBad.fst</code><span data-line="528"></span>
+</p>
+<pre class="para-block pre-fenced pre-fenced3 language-fstarlang lang-fstarlang fstarlang colorized" data-line="529" data-line-first="530;out/VeriCrypt2020\aux/StackClientBad.fst:1" style="display:block"><code data-line="530;out/VeriCrypt2020\aux/StackClientBad.fst:1"><span style="color:blue">module</span> StackClientBad
+
+<span style="color:blue">open</span> <span style="color:blue">Stack</span>
+
+<span style="color:blue">let</span> some_function_bad (s:stack) = <span style="color:blue">if</span> s = [] <span style="color:blue">then</span> ...  <span style="color:darkgreen">(*</span><span style="color:darkgreen"> ERROR </span><span style="color:darkgreen">*)</span>
+</code></pre></section></div></div><span data-line=""></span></div>
+<svg id='math-svg-paths' style='display:none' version='1.1' viewBox='0 0 0 0' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'>
+<defs>
+<path id='g3-0' d='M5.519-6.775H.329V-6.466H.568C1.335-6.466 1.355-6.356 1.355-5.998V-.777C1.355-.418 1.335-.309 .568-.309H.329V0C.677-.03 1.455-.03 1.843-.03C2.252-.03 3.158-.03 3.517 0V-.309H3.188C2.242-.309 2.242-.438 2.242-.787V-6.067C2.242-6.396 2.262-6.466 2.73-6.466H3.756C5.181-6.466 5.39-5.878 5.549-4.533H5.798L5.519-6.775Z'/>
+<path id='g3-58' d='M1.913-3.766C1.913-4.055 1.674-4.294 1.385-4.294S.857-4.055 .857-3.766S1.096-3.238 1.385-3.238S1.913-3.477 1.913-3.766ZM1.913-.528C1.913-.817 1.674-1.056 1.385-1.056S.857-.817 .857-.528S1.096 0 1.385 0S1.913-.239 1.913-.528Z'/>
+<path id='g3-100' d='M3.786-.548V.11L5.25 0V-.309C4.553-.309 4.473-.379 4.473-.867V-6.914L3.039-6.804V-6.496C3.736-6.496 3.816-6.426 3.816-5.938V-3.786C3.527-4.144 3.098-4.403 2.56-4.403C1.385-4.403 .339-3.427 .339-2.142C.339-.877 1.315 .11 2.451 .11C3.088 .11 3.537-.229 3.786-.548ZM3.786-3.218V-1.176C3.786-.996 3.786-.976 3.676-.807C3.377-.329 2.929-.11 2.501-.11C2.052-.11 1.694-.369 1.455-.747C1.196-1.156 1.166-1.724 1.166-2.132C1.166-2.501 1.186-3.098 1.474-3.547C1.684-3.856 2.062-4.184 2.6-4.184C2.949-4.184 3.367-4.035 3.676-3.587C3.786-3.417 3.786-3.397 3.786-3.218Z'/>
+<path id='g3-101' d='M1.116-2.511C1.176-3.995 2.012-4.244 2.351-4.244C3.377-4.244 3.477-2.899 3.477-2.511H1.116ZM1.106-2.301H3.885C4.105-2.301 4.134-2.301 4.134-2.511C4.134-3.497 3.597-4.463 2.351-4.463C1.196-4.463 .279-3.437 .279-2.192C.279-.857 1.325 .11 2.471 .11C3.686 .11 4.134-.996 4.134-1.186C4.134-1.285 4.055-1.305 4.005-1.305C3.915-1.305 3.895-1.245 3.875-1.166C3.527-.139 2.63-.139 2.531-.139C2.032-.139 1.634-.438 1.405-.807C1.106-1.285 1.106-1.943 1.106-2.301Z'/>
+<path id='g3-108' d='M1.763-6.914L.329-6.804V-6.496C1.026-6.496 1.106-6.426 1.106-5.938V-.757C1.106-.309 .996-.309 .329-.309V0C.658-.01 1.186-.03 1.435-.03S2.172-.01 2.54 0V-.309C1.873-.309 1.763-.309 1.763-.757V-6.914Z'/>
+<path id='g3-112' d='M1.714-3.746V-4.403L.279-4.294V-3.985C.986-3.985 1.056-3.925 1.056-3.487V1.176C1.056 1.624 .946 1.624 .279 1.624V1.933C.618 1.923 1.136 1.903 1.395 1.903C1.664 1.903 2.172 1.923 2.521 1.933V1.624C1.853 1.624 1.743 1.624 1.743 1.176V-.498V-.588C1.793-.428 2.212 .11 2.969 .11C4.154 .11 5.191-.867 5.191-2.152C5.191-3.417 4.224-4.403 3.108-4.403C2.331-4.403 1.913-3.965 1.714-3.746ZM1.743-1.136V-3.357C2.032-3.866 2.521-4.154 3.029-4.154C3.756-4.154 4.364-3.278 4.364-2.152C4.364-.946 3.666-.11 2.929-.11C2.531-.11 2.152-.309 1.883-.717C1.743-.927 1.743-.936 1.743-1.136Z'/>
+<path id='g3-114' d='M1.664-3.308V-4.403L.279-4.294V-3.985C.976-3.985 1.056-3.915 1.056-3.427V-.757C1.056-.309 .946-.309 .279-.309V0C.667-.01 1.136-.03 1.415-.03C1.813-.03 2.281-.03 2.68 0V-.309H2.471C1.733-.309 1.714-.418 1.714-.777V-2.311C1.714-3.298 2.132-4.184 2.889-4.184C2.959-4.184 2.979-4.184 2.999-4.174C2.969-4.164 2.77-4.045 2.77-3.786C2.77-3.507 2.979-3.357 3.198-3.357C3.377-3.357 3.626-3.477 3.626-3.796S3.318-4.403 2.889-4.403C2.162-4.403 1.803-3.736 1.664-3.308Z'/>
+<path id='g3-117' d='M3.895-.787V.11L5.33 0V-.309C4.633-.309 4.553-.379 4.553-.867V-4.403L3.088-4.294V-3.985C3.786-3.985 3.866-3.915 3.866-3.427V-1.654C3.866-.787 3.387-.11 2.66-.11C1.823-.11 1.783-.578 1.783-1.096V-4.403L.319-4.294V-3.985C1.096-3.985 1.096-3.955 1.096-3.068V-1.574C1.096-.797 1.096 .11 2.61 .11C3.168 .11 3.606-.169 3.895-.787Z'/>
+<path id='g1-40' d='M9.056-1.325C9.225-1.325 9.405-1.325 9.405-1.524S9.225-1.724 9.046-1.724H2.72C2.301-2.082 1.793-2.341 1.465-2.491C1.823-2.65 2.311-2.909 2.72-3.258H9.046C9.225-3.258 9.405-3.258 9.405-3.457S9.225-3.656 9.056-3.656H3.168C3.646-4.115 4.164-4.991 4.164-5.121C4.164-5.23 4.035-5.23 3.975-5.23C3.895-5.23 3.826-5.23 3.786-5.151C3.577-4.772 3.298-4.244 2.65-3.666C1.963-3.059 1.295-2.79 .777-2.64C.608-2.58 .598-2.57 .578-2.55C.558-2.54 .558-2.511 .558-2.491S.558-2.451 .568-2.431L.598-2.411C.618-2.401 .628-2.391 .817-2.331C2.162-1.933 3.158-1.026 3.716 .04C3.826 .239 3.836 .249 3.975 .249C4.035 .249 4.164 .249 4.164 .139C4.164 .01 3.656-.857 3.168-1.325H9.056Z'/>
+<path id='g1-96' d='M5.181-3.258C5.35-3.258 5.529-3.258 5.529-3.457S5.35-3.656 5.181-3.656H.946V-6.555C.946-6.735 .946-6.914 .747-6.914S.548-6.705 .548-6.555V-.359C.548-.209 .548 0 .747 0S.946-.179 .946-.359V-3.258H5.181Z'/>
+<path id='g0-61' d='M4.394-3.457C4.513-3.457 4.842-3.457 4.842-3.806S4.473-4.154 4.334-4.154H.887C.747-4.154 .379-4.154 .379-3.806S.707-3.457 .827-3.457H4.394ZM4.334-1.943C4.473-1.943 4.842-1.943 4.842-2.291S4.513-2.64 4.394-2.64H.827C.707-2.64 .379-2.64 .379-2.291S.747-1.943 .887-1.943H4.334Z'/>
+<path id='g0-97' d='M3.646-.319C3.866-.01 4.344 0 4.722 0C5.001 0 5.22 0 5.22-.309C5.22-.608 4.971-.608 4.822-.608C4.403-.608 4.304-.658 4.224-.687V-2.839C4.224-3.547 3.686-4.384 2.252-4.384C1.823-4.384 .807-4.384 .807-3.656C.807-3.357 1.016-3.198 1.255-3.198C1.405-3.198 1.684-3.288 1.694-3.656C1.694-3.736 1.704-3.746 1.903-3.766C2.042-3.776 2.172-3.776 2.262-3.776C3.019-3.776 3.537-3.467 3.537-2.76C1.773-2.73 .548-2.232 .548-1.275C.548-.588 1.176 .06 2.192 .06C2.56 .06 3.178-.01 3.646-.319ZM3.537-2.172V-1.335C3.537-1.106 3.537-.897 3.148-.717C2.79-.548 2.341-.548 2.262-.548C1.644-.548 1.235-.887 1.235-1.275C1.235-1.763 2.092-2.132 3.537-2.172Z'/>
+<path id='g0-99' d='M4.643-1.086C4.643-1.365 4.354-1.365 4.294-1.365C4.134-1.365 4.035-1.345 3.965-1.146C3.905-1.016 3.716-.548 2.979-.548C2.132-.548 1.415-1.245 1.415-2.152C1.415-2.63 1.694-3.776 3.039-3.776C3.248-3.776 3.636-3.776 3.636-3.686C3.646-3.337 3.836-3.198 4.075-3.198S4.523-3.367 4.523-3.656C4.523-4.384 3.487-4.384 3.039-4.384C1.325-4.384 .727-3.029 .727-2.152C.727-.956 1.664 .06 2.919 .06C4.304 .06 4.643-.917 4.643-1.086Z'/>
+<path id='g0-101' d='M4.224-1.903C4.433-1.903 4.623-1.903 4.623-2.271C4.623-3.407 3.985-4.384 2.69-4.384C1.504-4.384 .548-3.387 .548-2.162C.548-.946 1.554 .06 2.839 .06C4.154 .06 4.623-.837 4.623-1.086C4.623-1.365 4.334-1.365 4.274-1.365C4.095-1.365 4.015-1.335 3.945-1.146C3.726-.638 3.188-.548 2.909-.548C2.162-.548 1.415-1.046 1.255-1.903H4.224ZM1.265-2.501C1.405-3.228 1.993-3.776 2.69-3.776C3.208-3.776 3.826-3.527 3.915-2.501H1.265Z'/>
+<path id='g0-102' d='M2.521-3.686H3.736C3.885-3.686 4.134-3.686 4.134-3.985C4.134-4.294 3.895-4.294 3.736-4.294H2.521V-4.762C2.521-5.539 3.188-5.539 3.487-5.539C3.487-5.499 3.577-5.111 3.925-5.111C4.125-5.111 4.354-5.27 4.354-5.549C4.354-6.147 3.557-6.147 3.397-6.147C2.6-6.147 1.833-5.689 1.833-4.822V-4.294H.837C.677-4.294 .428-4.294 .428-3.985C.428-3.686 .677-3.686 .827-3.686H1.833V-.608H.827C.677-.608 .418-.608 .418-.309C.418 0 .677 0 .827 0H3.527C3.676 0 3.935 0 3.935-.299C3.935-.608 3.676-.608 3.527-.608H2.521V-3.686Z'/>
+<path id='g0-105' d='M3.078-3.885C3.078-4.194 3.019-4.294 2.68-4.294H1.265C1.116-4.294 .857-4.294 .857-3.995C.857-3.686 1.116-3.686 1.265-3.686H2.391V-.608H1.186C1.026-.608 .777-.608 .777-.299C.777 0 1.036 0 1.186 0H4.125C4.274 0 4.533 0 4.533-.299C4.533-.608 4.274-.608 4.125-.608H3.078V-3.885ZM3.078-5.599C3.078-5.878 2.859-6.097 2.58-6.097S2.082-5.878 2.082-5.599S2.301-5.101 2.58-5.101S3.078-5.32 3.078-5.599Z'/>
+<path id='g0-108' d='M2.959-5.679C2.959-5.988 2.899-6.087 2.56-6.087H.986C.827-6.087 .578-6.087 .578-5.778C.578-5.479 .837-5.479 .976-5.479H2.271V-.608H.986C.827-.608 .578-.608 .578-.299C.578 0 .837 0 .976 0H4.254C4.403 0 4.653 0 4.653-.299C4.653-.608 4.413-.608 4.254-.608H2.959V-5.679Z'/>
+<path id='g0-110' d='M1.654-3.826C1.654-4.144 1.654-4.294 1.255-4.294H.528C.369-4.294 .12-4.294 .12-3.985C.12-3.686 .379-3.686 .518-3.686H.966V-.608H.528C.369-.608 .12-.608 .12-.299C.12 0 .379 0 .518 0H2.102C2.242 0 2.501 0 2.501-.299C2.501-.608 2.252-.608 2.092-.608H1.654V-2.371C1.654-3.367 2.391-3.746 2.899-3.746C3.427-3.746 3.567-3.467 3.567-2.869V-.608H3.178C3.019-.608 2.77-.608 2.77-.299C2.77 0 3.039 0 3.178 0H4.702C4.842 0 5.101 0 5.101-.299C5.101-.608 4.852-.608 4.692-.608H4.254V-2.919C4.254-3.925 3.746-4.354 2.959-4.354C2.291-4.354 1.843-4.015 1.654-3.826Z'/>
+<path id='g0-111' d='M4.653-2.152C4.653-3.397 3.726-4.384 2.61-4.384S.568-3.397 .568-2.152C.568-.887 1.514 .06 2.61 .06S4.653-.897 4.653-2.152ZM2.61-.548C1.873-.548 1.255-1.295 1.255-2.222C1.255-3.128 1.903-3.776 2.61-3.776C3.328-3.776 3.965-3.128 3.965-2.222C3.965-1.295 3.347-.548 2.61-.548Z'/>
+<path id='g0-114' d='M2.212-1.853C2.212-2.79 2.8-3.746 4.005-3.746C4.015-3.507 4.184-3.308 4.433-3.308C4.653-3.308 4.852-3.467 4.852-3.736C4.852-3.935 4.732-4.354 3.905-4.354C3.397-4.354 2.76-4.174 2.212-3.547V-3.885C2.212-4.194 2.152-4.294 1.813-4.294H.717C.568-4.294 .319-4.294 .319-3.995C.319-3.686 .558-3.686 .717-3.686H1.524V-.608H.717C.568-.608 .319-.608 .319-.309C.319 0 .558 0 .717 0H3.318C3.467 0 3.726 0 3.726-.299C3.726-.608 3.467-.608 3.318-.608H2.212V-1.853Z'/>
+<path id='g0-116' d='M2.212-3.686H3.846C3.995-3.686 4.244-3.686 4.244-3.985C4.244-4.294 4.005-4.294 3.846-4.294H2.212V-5.111C2.212-5.3 2.212-5.519 1.873-5.519C1.524-5.519 1.524-5.31 1.524-5.111V-4.294H.658C.498-4.294 .249-4.294 .249-3.985C.249-3.686 .498-3.686 .648-3.686H1.524V-1.255C1.524-.299 2.202 .06 2.929 .06C3.666 .06 4.473-.369 4.473-1.255C4.473-1.435 4.473-1.644 4.125-1.644C3.796-1.644 3.786-1.435 3.786-1.265C3.776-.648 3.208-.548 2.979-.548C2.212-.548 2.212-1.066 2.212-1.315V-3.686Z'/>
+<path id='g2-30' d='M4.354-6.675C4.354-6.695 4.384-6.804 4.384-6.814S4.384-6.914 4.264-6.914C4.164-6.914 4.154-6.884 4.115-6.715L3.537-4.413C1.953-4.364 .488-3.039 .488-1.684C.488-.737 1.186 .05 2.401 .12C2.321 .428 2.252 .747 2.172 1.056C2.052 1.524 1.953 1.903 1.953 1.933C1.953 2.032 2.022 2.042 2.072 2.042S2.142 2.032 2.172 2.002C2.192 1.983 2.252 1.743 2.281 1.604L2.66 .12C4.264 .07 5.709-1.275 5.709-2.61C5.709-3.397 5.181-4.314 3.796-4.413L4.354-6.675ZM2.451-.1C1.853-.13 1.136-.478 1.136-1.474C1.136-2.67 1.993-4.065 3.477-4.194L2.451-.1ZM3.736-4.194C4.493-4.154 5.061-3.696 5.061-2.819C5.061-1.644 4.204-.219 2.71-.1L3.736-4.194Z'/>
+<path id='g2-116' d='M2.052-3.985H2.989C3.188-3.985 3.288-3.985 3.288-4.184C3.288-4.294 3.188-4.294 3.009-4.294H2.132C2.491-5.709 2.54-5.908 2.54-5.968C2.54-6.137 2.421-6.237 2.252-6.237C2.222-6.237 1.943-6.227 1.853-5.878L1.465-4.294H.528C.329-4.294 .229-4.294 .229-4.105C.229-3.985 .309-3.985 .508-3.985H1.385C.667-1.156 .628-.986 .628-.807C.628-.269 1.006 .11 1.544 .11C2.56 .11 3.128-1.345 3.128-1.425C3.128-1.524 3.049-1.524 3.009-1.524C2.919-1.524 2.909-1.494 2.859-1.385C2.431-.349 1.903-.11 1.564-.11C1.355-.11 1.255-.239 1.255-.568C1.255-.807 1.275-.877 1.315-1.046L2.052-3.985Z'/>
+<path id='g3-5' d='M6.107-5.998C6.107-6.356 6.127-6.466 6.894-6.466H7.133V-6.775H.329V-6.466H.568C1.335-6.466 1.355-6.356 1.355-5.998V-.777C1.355-.418 1.335-.309 .568-.309H.329V0C.677-.03 1.415-.03 1.793-.03S2.919-.03 3.268 0V-.309H3.029C2.262-.309 2.242-.418 2.242-.777V-6.466H5.22V-.777C5.22-.418 5.2-.309 4.433-.309H4.194V0C4.543-.03 5.28-.03 5.659-.03S6.785-.03 7.133 0V-.309H6.894C6.127-.309 6.107-.418 6.107-.777V-5.998Z'/>
+</defs>
+</svg>
+
+</body>
+<script>
+    // initialize printing
+    revealConfig.initPrint();
+    // initialize background embedded images
+    revealConfig.getEmbeddedImages();
+    </script>
+</html>

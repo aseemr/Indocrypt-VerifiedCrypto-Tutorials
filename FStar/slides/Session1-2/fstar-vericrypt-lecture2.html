@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+  <meta name="generator" content="Madoko, version 1.2.3" />
+  <meta name="author" content="Aseem Rastogi" />
+  <title>Verification of Low-level Programs in F*</title>
+  <style type="text/css"  class="link">
+  /*# sourceURL=madoko.css */
+  
+  .madoko .toc>.tocblock .tocblock .tocblock {
+    margin-left: 2.25em;
+  }
+  .madoko .toc>.tocblock .tocblock {
+    margin-left: 1.5em;
+  }
+  .madoko .toc-contents>.tocblock>.tocitem {
+    font-weight: bold;
+  }
+  .madoko .toc {
+    margin-top: 1em;
+  }
+  .madoko p.para-continue {
+    margin-bottom: 0pt;
+  }
+  .madoko .para-block+p {
+    margin-top: 0pt;
+  }
+  .madoko ul.para-block, .madoko ol.para-block {
+    margin-top: 0pt;
+    margin-bottom: 0pt;
+  }
+  .madoko ul.para-end, .madoko ol.para-end {
+    margin-bottom: 1em;
+  }
+  .madoko dl {
+    margin-left: 0em;
+  }
+  .madoko blockquote {
+    font-style: italic;
+  }
+  .madoko a.localref {
+    text-decoration: none;
+  }
+  .madoko a.localref:hover {
+    text-decoration: underline;
+  }
+  .madoko .footnotes {
+    font-size: smaller;
+    margin-top: 2em;
+  }
+  .madoko .footnotes hr {
+    width: 50%;
+    text-align: left;
+  }
+  .madoko .footnote {
+    margin-left: 1em;
+  }
+  .madoko .footnote-before {
+    margin-left: -1em;
+    width: 1em;
+    display: inline-block;
+  }
+  .madoko .align-center, .madoko .align-center>p {
+    text-align: center !important;
+  }
+  .madoko .align-center pre {
+    text-align: left;
+  }
+  .madoko .align-center>* {
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+  .madoko .align-left, .madoko .align-left>p {
+    text-align: left !important;
+  }
+  .madoko .align-left>* {
+    margin-left: 0pt !important;
+    margin-right: auto !important;
+  }
+  .madoko .align-right, .madoko .align-right>p {
+    text-align: right !important;
+  }
+  .madoko .align-right>* {
+    margin-left: auto !important;
+    margin-right: 0pt !important;
+  }
+  .madoko .align-center>table,
+  .madoko .align-left>table,
+  .madoko .align-right>table {
+    text-align: left !important;
+  }
+  .madoko .equation-before {
+    float: right;
+  }
+  .madoko .bibitem {
+    font-size: smaller;
+  }
+  .madoko .bibsearch {
+    font-size: x-small;
+    text-decoration:none;
+    color: black;
+    font-family: "Segoe UI Symbol", Symbola, serif;
+  }
+  .madoko .block, .madoko .figure, .madoko .bibitem, .madoko .equation, .madoko div.math {
+    margin-top: 1ex;
+    margin-bottom: 1ex;
+  }
+  .madoko .figure {
+    padding: 0.5em;
+    margin-left: 0pt;
+    margin-right: 0pt;
+  }
+  .madoko .hidden {
+    display: none;
+  }
+  .madoko .invisible {
+    visibility: hidden;
+  }
+  .madoko.preview .invisible {
+    visibility: visible;
+    opacity: 0.5;
+  }
+  .madoko code.code, .madoko span.code {
+    white-space: pre-wrap;
+  }
+  .madoko hr, hr.madoko {
+    border: none;
+    border-bottom: black solid 1px;
+    margin-bottom: 0.5ex;
+  }
+  .madoko .framed>*:first-child {
+    margin-top: 0pt;
+  }
+  .madoko .framed>*:last-child {
+    margin-bottom: 0pt;
+  }
+  .madoko ul.list-style-type-dash {
+      list-style-type: none !important;
+  }
+  .madoko ul.list-style-type-dash > li:before {
+      content: "\2013";
+      position: absolute;
+      margin-left: -1em;
+  }
+  .madoko table.madoko {
+    border-collapse: collapse;
+  }
+  .madoko td, .madoko th {
+    padding: 0ex 0.5ex;
+    margin: 0pt;
+    vertical-align: top;
+  }
+  .madoko .cell-border-left {
+    border-left: 1px solid black;
+  }
+  .madoko .cell-border-right {
+    border-right: 1px solid black;
+  }
+  .madoko thead>tr:first-child>.cell-line,
+  .madoko tbody:first-child>tr:first-child>.cell-line {
+    border-top: 1px solid black;
+    border-bottom: none;
+  }
+  .madoko .cell-line, .madoko .cell-double-line {
+    border-bottom: 1px solid black;
+    border-top: none;
+  }
+  .madoko .cell-double-line {
+    border-top: 1px solid black;
+    padding-top: 1.5px !important;
+  }
+  .madoko .input-mathpre .MathJax_Display {
+    text-align: left !important;
+  }
+  .madoko div.input-mathpre {
+    text-align: left;
+    margin-top: 1.5ex;
+    margin-bottom: 1ex;
+  }
+  .madoko .math-rendering {
+    text-align: left;
+    white-space: pre;
+    color: gray;
+  }
+  .madoko .mathdisplay {
+    text-align: center;
+  }
+  .madoko span.math-rendering {
+    display:inline-block;
+    width:8em;
+    overflow-x:auto;
+    font-size:70%;
+  }
+  .madoko span.math-rendering::-webkit-scrollbar {
+    width:4px;
+  }
+  .madoko .pretty table {
+    border-collapse: collapse;
+  }
+  .madoko .pretty td {
+    padding: 0em;
+  }
+  .madoko .pretty td.empty {
+    min-width: 1.5ex;
+  }
+  .madoko .pretty td.expander {
+    width: 100em;
+  }
+  body.madoko, .madoko .serif {
+    font-family: Cambria,"Times New Roman","Liberation Serif","Times",serif;
+  }
+  .madoko .sans-serif {
+    font-family: "Calibri", "Optima", sans-serif;
+  }
+  .madoko .symbol {
+    font-family: "Segoe UI Symbol", Symbola, serif;
+  }
+  body.madoko {
+    -webkit-text-size-adjust: 100%;       
+    text-rendering: optimizeLegibility;
+  }
+  body.madoko {
+    max-width: 88ex; 
+    margin: 1em auto;
+    padding: 0em 2em;
+  }
+  body.preview.madoko {
+    padding: 0em 1em;
+  }
+  .madoko p {
+    text-align: justify;
+  }
+  .madoko h1, .madoko h2, .madoko h3, .madoko h4 {
+    margin-top: 1.22em;
+    margin-bottom: 1ex;
+  }
+  .madoko h1+p, .madoko h2+p, .madoko h3+p, .madoko h4+p, .madoko h5+p  {
+    margin-top: 1ex;
+  }
+  .madoko h5, .madoko h6 {
+    margin-top: 1ex;
+    font-size: 1em;
+  }
+  .madoko h5 {
+    margin-bottom: 0.5ex;
+  }
+  .madoko h5 + p {
+    margin-top: 0.5ex;
+  }
+  .madoko h6 {
+    margin-bottom: 0pt;
+  }
+  .madoko h6 + p {
+    margin-top: 0pt;
+  }
+  .madoko pre, .madoko code, .madoko kbd, .madoko samp, .madoko tt,
+  .madoko .monospace, .madoko .token-indent, .madoko .reveal pre, .madoko .reveal code, .madoko .email {
+    font-family: Consolas,"Andale Mono WT","Andale Mono",Lucida Console,Monaco,monospace,monospace;
+    font-size: 0.85em;
+  }
+  .madoko pre code, .madoko .token-indent {
+    font-size: 0.95em;
+  }
+  .madoko pre code {
+    font-family: inherit !important;
+  }
+  .madoko ol.linenums li {
+    background-color: white;
+    list-style-type: decimal;
+  }
+  .madoko .remote {
+    background-color: #F0FFF0;
+  }
+  .madoko .remote + * {
+    margin-top: 0pt;
+  }
+  @media print {
+    body.madoko {
+      font-size: 10pt;
+    }
+    @page {
+      margin: 1in 1.5in;
+    }
+  }
+  @media only screen and (max-device-width:1024px) {
+    body.madoko {
+      padding: 0em 0.5em;
+    }
+    .madoko li {
+      text-align: left;
+    }
+  }
+  
+    </style>
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/reveal.js/2.6.2/css/reveal.min.css"  class="link">
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/reveal.js/2.6.2/css/theme/solarized.css"  class="link">
+  <script src="https://cdn.jsdelivr.net/reveal.js/2.6.2/lib/js/head.min.js"  class="script preview"></script>
+  <script src="https://cdn.jsdelivr.net/reveal.js/2.6.2/js/reveal.js"  class="script preview"></script>
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+      <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/reveal.js/2.6.2/css/theme/solarized.css" id="theme">    
+      <!--[if lt IE 9]>
+      <script src="https://cdn.jsdelivr.net/reveal.js/2.6.2/lib/js/html5shiv.js"></script>
+      <![endif]-->
+      <style>
+      body.madoko {
+        margin: 0pt;
+        padding: 0pt;
+        max-width: 100%;      
+      }
+      .madoko .reveal h1 {
+          font-size: 3.7em;
+      }
+      .madoko .reveal h2 {
+          font-size: 2.1em;
+      }
+      .reveal .authorblock .author {
+          font-size: 120%;
+          margin-bottom: 1ex;
+      }        
+      .reveal table {
+          margin-left: auto;
+          margin-right: auto;
+      }
+      .reveal pre table {
+        margin-left: 0pt;
+      }
+      .madoko .reveal pre.pretty {
+        padding-top: 0pt;
+        padding-bottom: 0pt;
+      }
+      .reveal li p {
+          text-align: left;
+      }
+      .reveal h2 {
+          margin-bottom: 0.7em;
+      }
+      .reveal section ul,
+      .reveal section ol {
+          margin-top: 0.35em;
+          margin-bottom: 0.35em;
+      }
+      .reveal section img.math-display {
+          padding: 1em;
+          box-shadow: none;
+          border: none;
+      }
+      .reveal section img.math-inline {
+          margin: 0pt;
+          padding: 0pt;
+          background-color: none;
+          box-shadow: none;
+          border: none;
+      }
+      .reveal section img {
+          box-shadow: none;
+          border: none;
+      }
+      .madoko .reveal pre {
+          border: 1px solid black;
+          word-wrap: normal;
+          background-color: white;
+          font-size: 0.7em;
+          padding: 0.7em;
+          line-height: 100%;
+          width: 100%;
+      }      
+      .reveal pre code, .reveal code {
+          padding: 0pt;
+      }
+      .reveal nav.toc {
+          line-height: 1em;
+          font-size: 60%;
+          overflow-y: auto;
+      }    
+      .reveal .tocitem {
+          text-align: left;
+      }
+      .reveal .toc>.tocblock .tocblock {
+          margin-left: 0.5em;
+      }   
+      .reveal .toc>.tocblock .tocblock .tocblock {
+          margin-left: 1em;
+      }
+      .reveal .bibliography {
+        height: 18em;
+        overflow-y: auto;
+        font-size: 0.8em;
+        line-height: 1.25;
+      }
+      .reveal section[data-smaller=""],
+      .reveal section[data-smaller="true"] {
+        font-size: 80%;
+        width: 110%;
+      }
+      .reveal .slides>section[data-smaller=""],
+      .reveal .slides>section[data-smaller="true"] {
+        left: -55%;
+      }
+      .reveal .details {
+        display: none;
+      }
+      .reveal[data-details=""] .details,
+      .reveal[data-details="true"] .details {
+        display: initial;
+      }
+      /* Display in the preview window */
+      html, body.madoko.preview, body.madoko.preview-full, .body.madoko {
+        height  : 100% !important;
+        width   : auto!important;
+        padding : 0pt !important;
+        margin  : 0pt !important;
+      }
+      body.madoko.preview, body.madoko.preview-full, .preview .body.madoko {
+        overflow: hidden !important;
+      }
+      body.preview .reveal .slides .fragment {
+        visibility: visible;
+        opacity: 0.5;
+      }
+      body.preview .reveal .slides .fragment.visible {
+        opacity: 1.0;
+      }
+      .preview .reveal div.notes,
+      .preview .reveal aside.notes {
+        display  : block;
+        position : absolute;
+        width    : 30%;
+        left     : 70%;
+        top      : -15%;
+        font-size: 50%;
+        border   : 1px solid black;
+        border-radius   : 10px;
+        background-color: white;
+      }
+      /* 'static' display in the preview window, unused for now */
+      body.preview.static div.reveal, 
+      body.preview.static div.ticreveal .slides, 
+      body.preview.static div.reveal section {
+        display: block !important;
+        position: relative !important;
+        width: auto !important;      
+      }
+      body.preview.static div.reveal section {
+        border: solid 1px black;
+        padding: 1em !important;
+        margin-top: 1em;
+        min-height: 15em;
+        top: 0pt;
+      }
+      body.madoko.preview.static section {
+        font-size: 75%;
+      }
+      body.madoko.preview.static {
+        padding: 0em 1em !important;
+      }
+      body.madoko.preview.static .reveal pre {
+        width: 95%;
+      }    
+      body.preview .reveal[data-details="false"] .details {
+        display: initial;
+        color: gray;
+      }
+      body.preview .reveal[data-long="false"] section[data-long] {
+        border-left: 2px black solid;
+      }
+      </style>
+      <script>    
+      // Full list of configuration options available here:
+      // https://github.com/hakimel/reveal.js#configuration
+      window.revealConfig = {
+          controls: true,
+          progress: true,
+          history: true,
+          center: /^\s*(true|1)\s*$/i.test("true"),
+          slideNumber: /^\s*(true|1)\s*$/i.test("true"),
+          dependencies: [
+            { src: 'https://cdn.jsdelivr.net/reveal.js/2.6.2/lib/js/classList.js', condition: function() { return !document.body.classList; } },
+            { src: 'https://cdn.jsdelivr.net/reveal.js/2.6.2/plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+            { src: 'https://cdn.jsdelivr.net/reveal.js/2.6.2/plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } },
+          ],
+      };
+      function revealAddFragments() {
+        [].forEach.call(document.querySelectorAll( ".fragmented" ), function(elem0) {
+          var elem = (/^H\d$/.test(elem0.nodeName) ? elem0.parentNode : elem0);
+          [].forEach.call(elem.children, function(item) {
+            if (item==elem0) return;
+            if (item && !/\bfragment(ed)?\b/.test(item.className) && item.nodeType===1) {
+              item.className = item.className + " fragment";
+            }
+          });
+        });
+      }
+      function revealQuotedList(listType) {
+        //compatibility with Rmarkdown slides
+        [].forEach.call( document.querySelectorAll("blockquote>" + listType), function(ul) {
+          if (!/\bfragmented\b/.test(ul.className)) {
+            ul.className = ul.className + " fragmented";
+          }        
+          var quote = ul.parentNode;
+          if (quote.childElementCount===1) {
+            quote.parentNode.replaceChild(ul,quote);
+          }
+        });
+      }
+      function revealBuildToFragmented() {
+        [].forEach.call(document.querySelectorAll( ".build" ), function(elem) {
+          if (elem && !/\bfragmented\b/.test(elem.className) && elem.nodeType===1) {
+            elem.className = elem.className + " fragmented";
+          }
+        });
+      }
+      function revealDivNotesToAside() {
+        [].forEach.call(document.querySelectorAll("div.notes"), function(elem) {
+          var aside = document.createElement("ASIDE");
+          if (elem.id) aside.id = elem.id;
+          aside.className = elem.className;
+          [].forEach.call(elem.attributes, function(attr) {
+            aside.setAttribute( attr.name, attr.value );
+          });
+          aside.innerHTML = elem.innerHTML;
+          elem.parentNode.replaceChild(aside,elem);
+        });
+      }
+      function revealDataQuery() {
+        var reveal = document.querySelector(".reveal");
+        if (!reveal) return;
+        window.location.search.replace(/\bdata-(\w+)(?:=(\w+))?\b/g, function(matched,key,value) {
+          reveal.setAttribute("data-" + key, (value ? value : ""));
+          return matched;
+        });
+      }
+      function revealRemoveLong() {
+        // remove parts for 'long' presentation
+        if (/\bpreview(?![\w\-])/.test(document.body.className)) return;
+        var reveal = document.querySelector(".reveal");
+        if (!reveal) return;
+        var value = reveal.hasAttribute("data-long") ? reveal.getAttribute("data-long") : null;
+        if (value==null || value=="false" || value=="0") {
+          [].forEach.call( document.querySelectorAll("section[data-long]"), function(elem) {
+            elem.parentNode.removeChild(elem);
+          });
+        }
+      }
+      revealConfig.onLoad = function() {
+        revealConfig.getEmbeddedImages();
+        revealDataQuery();
+        revealRemoveLong();
+        revealQuotedList("ul");
+        revealQuotedList("ol");
+        revealBuildToFragmented();
+        revealDivNotesToAside();
+        revealAddFragments();
+      };
+      document.addEventListener("load",revealConfig.onLoad);    
+      document.addEventListener("DOMContentLoaded", function() {
+        if (typeof Reveal !== "undefined" && !Reveal.isReady()) {
+          revealConfig.onLoad();
+          Reveal.initialize(revealConfig);
+        }
+      });    
+      // add support for printing:
+      // use  ?print-pdf to get a pdf-printable version (in Chrome)
+      // use  ?print-paper to get a paper-printable version.
+      revealConfig.initPrint = function() {
+        var cssLink = null;
+        var bodyClass = null;
+        var cap = window.location.search.match(/\bprint-(\w+)\b/);
+        if (cap) {
+          bodyClass = cap[0];
+          cssLink = "https://cdn.jsdelivr.net/reveal.js/2.6.2/css/print/" + cap[1] + ".css";
+        }
+        if (cssLink) {
+          var link  = document.createElement( "link" );
+          link.rel  = "stylesheet";
+          link.type = "text/css";
+          link.href = cssLink;
+          var head = document.getElementsByTagName( 'head' )[0];
+          if (head) head.appendChild( link );
+        }
+        if (bodyClass) {
+          document.body.className = document.body.className + " " + bodyClass;
+        }
+      };
+      revealConfig.getEmbeddedImages = function() {
+        var images = {};
+        [].forEach.call( document.querySelectorAll("img[data-linkid]"), function(img) {
+          var linkid = img.getAttribute("data-linkid");
+          if (linkid) images["/" + linkid] = img.src;
+          var path = img.getAttribute("data-path");
+          if (path) images["/" + path] = img.src;
+        });     
+        [].forEach.call( document.querySelectorAll("section"), function(slide) {
+          var attrName = "data-background";
+          var image = slide.getAttribute(attrName);
+          if (!image) {
+            attrName = "data-background-image";
+            image = slide.getAttribute(attrName);
+          }
+          if (!image) return;
+          var cap = /^\s*!?\[([^\]]+)\]\s*$/.exec(image);
+          var href = images["/" + (cap ? cap[1] : image)];
+          if (!href) return;
+          if (attrName==="data-background" && /^data:/.test(href)) href = "url(" + href + ")";
+          slide.setAttribute(attrName, href);
+        });
+      };    
+      </script>
+  <script src="aux/script.js"></script>
+      <link rel="stylesheet" href="aux/style.css" id="custom_style">
+  </head>
+<body class="madoko">
+
+<div class="body madoko" style="line-adjust:0">
+<div class="reveal" data-long="false" data-details="false" data-line="15" style="line-adjust:0">
+<div class="slides" data-line="15" style="line-adjust:0">
+
+<div class="mathdefs input-mathdefs" data-line="16"></div>
+<section id="sec-verification-of-low-level-programs-in-f-" class="section section1" data-section-depth="1" data-line="20"><h2 id="heading-sec-verification-of-low-level-programs-in-f-" class="h1" data-heading-depth="1" style="display:block">Verification of Low-level Programs in F*</h2>
+<div class="center align-center" data-line="22" style="text-align:center">
+<p class="p noindent" data-line="23"><span data-line="23"></span><a href="https://www.fstar-lang.org"><img src="aux/fstar-new.png" alt="fstar-logo" data-path="aux/fstar-new.png" data-linkid="fstar-logo" style="width:200px"></a><span data-line="23"></span>
+</p>
+<p class="p indent" data-line="25"><span data-line="25"></span><a href="https://www.microsoft.com/en-us/research/people/aseemr/">Aseem Rastogi</a><span data-line="25"></span> and
+<span data-line="26"></span><a href="https://polubelova.github.io/">Marina Polubelova</a><span data-line="26"></span>
+</p>
+<p class="p indent" data-line="28"><span data-line="28"></span>VeriCrypt 2020
+</p></div><!------------------------------------------------------------------------------->
+
+
+</section>
+<section id="sec-values-and-computations" class="section section2" data-section-depth="2" data-line="36"><h3 id="heading-sec-values-and-computations" class="h2" data-heading-depth="2" style="display:block">Values and Computations</h3>
+<ul class="ul list-star loose" data-line="38">
+<li class="li ul-li list-star-li loose-li" data-line="38">
+<p data-line="38"><span data-line="38"></span>&#8220;Values&#8221;<span data-line="38"></span> aka unconditionally total terms
+</p></li>
+<li class="li ul-li list-star-li loose-li" data-line="40">
+<p data-line="40"><span data-line="40"></span><strong class="strong-star2">Two classes of types</strong><span data-line="40"></span>
+</p>
+<ul class="ul list-dash compact" data-line="41">
+<li class="li ul-li list-dash-li compact-li" data-line="41"><span data-line="41"></span>Value types (<span data-line="41"></span><code class="code code1 language-fstarlang lang-fstarlang fstarlang colorized">t</code><span data-line="41"></span>): <span data-line="41"></span><code class="code code1 language-fstarlang lang-fstarlang fstarlang colorized">int</code><span data-line="41"></span>, <span data-line="41"></span><code class="code code1 language-fstarlang lang-fstarlang fstarlang colorized">list int</code><span data-line="41"></span>, <span data-line="41"></span>&#8230;<span data-line="41"></span>
+</li>
+<li class="li ul-li list-dash-li compact-li" data-line="42"><span data-line="42"></span>Computation types (<span data-line="42"></span><code class="code code1 language-fstarlang lang-fstarlang fstarlang colorized">C</code><span data-line="42"></span>): conditionally pure,<span data-line="42"></span> <span style="color:DarkBlue"><strong class="strong-star2">divergent, stateful</strong></span><span data-line="42"></span>, <span data-line="42"></span>&#8230;<span data-line="42"></span>
+</li></ul>
+</li>
+<li class="li ul-li list-star-li loose-li" data-line="44">
+<p data-line="44"><span data-line="44"></span><strong class="strong-star2">F* effect system encapsulates effectful code</strong><span data-line="44"></span>
+</p>
+<ul class="ul list-dash compact" data-line="46">
+<li class="li ul-li list-dash-li compact-li" data-line="46"><span data-line="46"></span>Pure code cannot call effectful code
+</li>
+<li class="li ul-li list-dash-li compact-li" data-line="47"><span data-line="47"></span>But, via sub-effecting, pure code can be used in effectful contexts
+</li></ul>
+</li></ul>
+<!------------------------------------------------------------------------------>
+
+
+</section>
+<section id="sec-the-divergence-effect-dv" class="section section2" data-section-depth="2" data-line="51"><h3 id="heading-sec-the-divergence-effect-dv" class="h2" data-heading-depth="2" style="display:block">The divergence effect (<code class="code code1 language-fstarlang lang-fstarlang fstarlang colorized"><span style="color:blue">Dv</span></code>)</h3>
+<ul class="ul list-star loose" data-line="53">
+<li class="li ul-li list-star-li loose-li" data-line="53">
+<p data-line="53"><span data-line="53"></span>We might not want to prove all code terminating
+</p>
+<pre class="para-block pre-fenced pre-fenced3 language-fstarlang lang-fstarlang fstarlang colorized" data-line="54" data-line-first="55" style="display:block"><code data-line="55"><span style="color:blue">val</span> factorial : int <span style="color:blue">-&gt;</span> <span style="color:blue">Dv</span> int</code></pre></li>
+<li class="li ul-li list-star-li loose-li fragment" data-line="58">
+<p data-line="58"><span data-line="58"></span>Some useful code really is not always terminating
+</p>
+<ul class="ul list-dash loose" data-line="60">
+<li class="li ul-li list-dash-li loose-li fragment" data-line="60">
+<p data-line="60"><span data-line="60"></span>evaluator for lambda terms
+</p>
+<pre class="para-block pre-fenced pre-fenced3 language-fstarlang lang-fstarlang fstarlang colorized" data-line="61" data-line-first="62" style="display:block"><code data-line="62"><span style="color:blue">val</span> eval : exp <span style="color:blue">-&gt;</span> <span style="color:blue">Dv</span> exp
+<span style="color:blue">let</span> <span style="color:blue">rec</span> eval e =
+  <span style="color:blue">match</span> e <span style="color:blue">with</span>
+  | App (Lam x e1) e2 <span style="color:blue">-&gt;</span> eval (subst x e2 e1)
+  | App e1 e2         <span style="color:blue">-&gt;</span> eval (App (eval e1) e2)
+  | Lam x e1          <span style="color:blue">-&gt;</span> Lam x (eval e1)
+  | _                 <span style="color:blue">-&gt;</span> e
+
+<span style="color:blue">let</span> main () = eval (App (Lam <span class="constant" style="color:purple">0</span> (App (Var <span class="constant" style="color:purple">0</span>) (Var <span class="constant" style="color:purple">0</span>)))
+                        (Lam <span class="constant" style="color:purple">0</span> (App (Var <span class="constant" style="color:purple">0</span>) (Var <span class="constant" style="color:purple">0</span>))))</code></pre></li>
+<li class="li ul-li list-dash-li loose-li fragment" data-line="73">
+<p data-line="73"><span data-line="73"></span>web servers, <span data-line="73"></span>&#8230;<span data-line="73"></span>
+</p></li></ul>
+</li></ul>
+<!------------------------------------------------------------------------------>
+
+
+</section>
+<section id="sec-f--effect-system-encapsulates-effectful-code" class="section section2" data-section-depth="2" data-line="77"><h3 id="heading-sec-f--effect-system-encapsulates-effectful-code" class="h2" data-heading-depth="2" style="display:block">F* effect system encapsulates effectful code</h3>
+<ul class="ul list-star loose" data-line="79">
+<li class="li ul-li list-star-li loose-li" data-line="79">
+<p data-line="79"><span data-line="79"></span>Pure code cannot call potentially divergent code
+</p></li>
+<li class="li ul-li list-star-li loose-li fragment" data-line="81">
+<p data-line="81"><span data-line="81"></span>Only pure code can appear in specifications
+</p>
+<pre class="para-block pre-fenced pre-fenced3 language-fstarlang lang-fstarlang fstarlang colorized" data-line="82" data-line-first="83" style="display:block"><code data-line="83"><span style="color:blue">val</span> factorial : int <span style="color:blue">-&gt;</span> <span style="color:blue">Dv</span> int
+
+<span style="color:blue">type</span> tau = x:int{x = factorial (-<span class="constant" style="color:purple">1</span>)}</code></pre>
+<div class="fragment console" data-line="87">
+<pre class="para-block pre-fenced pre-fenced3 language-text lang-text text" data-line="88" data-line-first="89" style="display:block"><code data-line="89">type tau = x:int{x = factorial (-1)}
+                 ^^^^^^^^^^^^^^^^^^
+Expected a pure expression; got an expression ... with effect &quot;DIV&quot;</code></pre></div><!-- Cheating quite badly above since I don't want to tell them about ghost -->
+
+
+</li>
+<li class="li ul-li list-star-li loose-li fragment" data-line="96">
+<p data-line="96"><span data-line="96"></span><strong class="strong-star2">Sub-effecting:</strong><span data-line="96"></span> <span data-line="96"></span><code class="code code1 language-fstarlang lang-fstarlang fstarlang colorized"><span style="color:blue">Tot</span> t &lt;: <span style="color:blue">Dv</span> t</code><span data-line="96"></span>
+</p></li>
+<li class="li ul-li list-star-li loose-li fragment" data-line="98">
+<p data-line="98"><span data-line="98"></span>So, divergent code can include pure code
+</p>
+<pre class="para-block pre-fenced pre-fenced3 language-fstarlang lang-fstarlang fstarlang colorized" data-line="99" data-line-first="100" style="display:block"><code data-line="100">incr <span class="constant" style="color:purple">2</span> + factorial (-<span class="constant" style="color:purple">1</span>) : <span style="color:blue">Dv</span> int</code></pre></li></ul>
+<!------------------------------------------------------------------------------>
+
+
+</section>
+<section id="sec-stack-effect-for-low-level-programming" class="section section2" data-section-depth="2" data-line="105"><h3 id="heading-sec-stack-effect-for-low-level-programming" class="h2" data-heading-depth="2" style="display:block"><code class="code code1 language-fstarlang lang-fstarlang fstarlang colorized"><span style="color:blue">Stack</span></code> effect for low-level programming</h3>
+<ul class="ul list-star loose" data-line="107">
+<li class="li ul-li list-star-li loose-li" data-line="107">
+<p data-line="107"><span data-line="107"></span>A state effect that models a well-behaved subset of C
+</p></li>
+<li class="li ul-li list-star-li loose-li fragment" data-line="109">
+<p data-line="109"><span data-line="109"></span>Operates over a C-like memory-model defined in F<span data-line="109"></span>*<span data-line="109"></span>
+</p>
+<pre class="para-block pre-fenced pre-fenced3 language-fstarlang lang-fstarlang fstarlang colorized" data-line="110" data-line-first="111" style="display:block"><code data-line="111"><span style="color:blue">Stack</span> a pre post
+
+pre : mem <span style="color:blue">-&gt;</span> prop
+
+post : mem <span style="color:blue">-&gt;</span> a <span style="color:blue">-&gt;</span> mem <span style="color:blue">-&gt;</span> prop</code></pre></li>
+<li class="li ul-li list-star-li loose-li fragment" data-line="118">
+<p data-line="118"><span data-line="118"></span>If <span data-line="118"></span>&#160;<span data-line="118"></span> <span data-line="118"></span><code class="code code1 language-fstarlang lang-fstarlang fstarlang colorized">(e : <span style="color:blue">Stack</span> a pre post)</code><span data-line="118"></span> <span data-line="118"></span>&#160;<span data-line="118"></span> is run in an initial memory <span data-line="118"></span>&#160;<span data-line="118"></span> <span data-line="118"></span><code class="code code1 language-fstarlang lang-fstarlang fstarlang colorized">s0</code><span data-line="118"></span> <span data-line="118"></span>&#160;<span data-line="118"></span> s.t. <span data-line="118"></span>&#160;<span data-line="118"></span> <span data-line="118"></span><code class="code code1 language-fstarlang lang-fstarlang fstarlang colorized">(pre s0)</code><span data-line="118"></span> <span data-line="118"></span>&#160;<span data-line="118"></span> is valid, then <span data-line="118"></span>&#160;<span data-line="118"></span> <span data-line="118"></span><code class="code code1 language-fstarlang lang-fstarlang fstarlang colorized">e</code><span data-line="118"></span> <span data-line="118"></span>&#160;<span data-line="118"></span> either diverges or returns a value <span data-line="118"></span>&#160;<span data-line="118"></span> <span data-line="118"></span><code class="code code1 language-fstarlang lang-fstarlang fstarlang colorized">v</code><span data-line="118"></span> <span data-line="118"></span>&#160;<span data-line="118"></span> and transforms the memory to <span data-line="118"></span>&#160;<span data-line="118"></span> <span data-line="118"></span><code class="code code1 language-fstarlang lang-fstarlang fstarlang colorized">s1</code><span data-line="118"></span> <span data-line="118"></span>&#160;<span data-line="118"></span> s.t. <span data-line="118"></span>&#160;<span data-line="118"></span> <span data-line="118"></span><code class="code code1 language-fstarlang lang-fstarlang fstarlang colorized">(post s0 v s1)</code><span data-line="118"></span> <span data-line="118"></span>&#160;<span data-line="118"></span> is valid
+</p></li>
+<li class="li ul-li list-star-li loose-li fragment" data-line="120">
+<p data-line="120"><span data-line="120"></span>Partial effect (includes divergence)
+</p></li>
+<li class="li ul-li list-star-li loose-li fragment" data-line="122">
+<p data-line="122"><span data-line="122"></span>Low-level libraries for machine integers and C-arrays
+</p></li></ul>
+<!------------------------------------------------------------------------------>
+
+
+</section>
+<section id="sec-machine-integers-libraries-for-low-level-programming" class="section section2" data-section-depth="2" data-line="126"><h3 id="heading-sec-machine-integers-libraries-for-low-level-programming" class="h2" data-heading-depth="2" style="display:block">Machine integers libraries for low-level programming</h3>
+<ul class="ul list-star loose" data-line="128">
+<li class="li ul-li list-star-li loose-li" data-line="128">
+<p data-line="128"><span data-line="128"></span>Support for different bit-widths (8, 16, 32, 64, 128)
+</p></li>
+<li class="li ul-li list-star-li loose-li" data-line="130">
+<p data-line="130"><span data-line="130"></span>The preconditions enforce safety conditions, e.g. no over- or underflow
+</p></li>
+<li class="li ul-li list-star-li loose-li" data-line="132">
+<p data-line="132"><span data-line="132"></span>The postconditions establish functional correctness
+</p></li>
+<li class="li ul-li list-star-li loose-li" data-line="134">
+<p data-line="134"><span data-line="134"></span>The libraries enforce abstraction via interfaces where the representations are opaque to the client
+</p></li>
+<li class="li ul-li list-star-li loose-li" data-line="136">
+<p data-line="136"><span data-line="136"></span>A coercion <span data-line="136"></span>&#160;<span data-line="136"></span> <span data-line="136"></span><code class="code code1 language-fstarlang lang-fstarlang fstarlang colorized">v</code><span data-line="136"></span> <span data-line="136"></span>&#160;<span data-line="136"></span> provides a natural number view for specifications
+</p>
+<pre class="para-block pre-fenced pre-fenced3 language-fstarlang lang-fstarlang fstarlang colorized" data-line="137" data-line-first="138" style="display:block"><code data-line="138"><span style="color:blue">val</span> add (a:u32) (b:u32) : <span style="color:blue">Pure</span> u32
+  (<span style="color:blue">requires</span> <span class="constant" style="color:purple">0</span> &lt;= v a + v b /\ v a + v b &lt;= pow2 <span class="constant" style="color:purple">32</span> - <span class="constant" style="color:purple">1</span>)
+  (<span style="color:blue">ensures</span> <span style="color:blue">fun</span> c <span style="color:blue">-&gt;</span> v c = v a + v b)
+
+<span style="color:blue">val</span> div (a:u32) (b:u32) : <span style="color:blue">Pure</span> u32
+  (<span style="color:blue">requires</span> v b &lt;&gt; <span class="constant" style="color:purple">0</span>)
+  (<span style="color:blue">ensures</span> <span style="color:blue">fun</span> c <span style="color:blue">-&gt;</span> v c = v a / v b)</code></pre></li></ul>
+<!------------------------------------------------------------------------------>
+
+
+</section>
+<section id="sec-buffer-library-for-c-arrays" class="section section2" data-section-depth="2" data-line="149"><h3 id="heading-sec-buffer-library-for-c-arrays" class="h2" data-heading-depth="2" style="display:block">Buffer library for C arrays</h3>
+<ul class="ul list-star loose" data-line="151">
+<li class="li ul-li list-star-li loose-li" data-line="151">
+<p data-line="151"><span data-line="151"></span>A model for the well-behaved fragment of the C array semantics
+</p>
+<pre class="para-block pre-fenced pre-fenced3 language-fstarlang lang-fstarlang fstarlang colorized" data-line="152" data-line-first="153" style="display:block"><code data-line="153"><span style="color:blue">type</span> buffer (a:<span style="color:blue">Type</span>)
+
+<span style="color:blue">type</span> lbuffer (a:<span style="color:blue">Type</span>) (len:u32) = b:buffer a{length b = v len}
+
+<span style="color:blue">val</span> as_seq (#a:<span style="color:blue">Type</span>) (m:mem) (b:buffer a) : Seq.seq a</code></pre></li>
+<li class="li ul-li list-star-li loose-li fragment" data-line="160">
+<p data-line="160"><span data-line="160"></span>APIs to read and write the arrays
+</p></li>
+<li class="li ul-li list-star-li loose-li fragment" data-line="162">
+<p data-line="162"><span data-line="162"></span>With appropriate safety checks in preconditions and functional correctness specifications in postconditions
+</p>
+<pre class="para-block pre-fenced pre-fenced3 language-fstarlang lang-fstarlang fstarlang colorized" data-line="163" data-line-first="164" style="display:block"><code data-line="164"><span style="color:blue">val</span> read (#a:<span style="color:blue">Type</span>) (b:buffer a) (i:u32) : <span style="color:blue">Stack</span> a
+  (<span style="color:blue">requires</span> <span style="color:blue">fun</span> m <span style="color:blue">-&gt;</span> live m b /\ v i &lt; length b)  <span style="color:darkgreen">(*</span><span style="color:darkgreen"> Temporal and spatial memory safety </span><span style="color:darkgreen">*)</span>
+  (<span style="color:blue">ensures</span> <span style="color:blue">fun</span> m0 x m1 <span style="color:blue">-&gt;</span> x = Seq.index (as_seq m0 b) i)  <span style="color:darkgreen">(*</span><span style="color:darkgreen"> Functional correctness </span><span style="color:darkgreen">*)</span></code></pre></li>
+<li class="li ul-li list-star-li loose-li fragment" data-line="169">
+<p data-line="169"><span data-line="169"></span>A weak specification
+</p></li></ul>
+<!------------------------------------------------------------------------------>
+
+
+</section>
+<section id="sec-dynamic-framing-using-nbsp-modifies" class="section section2" data-section-depth="2" data-line="174"><h3 id="heading-sec-dynamic-framing-using-nbsp-modifies" class="h2" data-heading-depth="2" style="display:block">Dynamic framing using &#160; <code class="code code1 language-fstarlang lang-fstarlang fstarlang colorized">modifies</code></h3>
+<ul class="ul list-star loose" data-line="176">
+<li class="li ul-li list-star-li loose-li" data-line="176">
+<p data-line="176"><span data-line="176"></span>Need to be somewhat precise about the memory fragment that changes
+</p>
+<pre class="para-block pre-fenced pre-fenced3 language-fstarlang lang-fstarlang fstarlang colorized" data-line="177" data-line-first="178" style="display:block"><code data-line="178"><span style="color:blue">val</span> read (#a:<span style="color:blue">Type</span>) (b:buffer a) (i:u32) : <span style="color:blue">Stack</span> a
+  (<span style="color:blue">requires</span> <span style="color:blue">fun</span> m <span style="color:blue">-&gt;</span> live m b /\ v i &lt; length b)
+  (<span style="color:blue">ensures</span> <span style="color:blue">fun</span> m0 x m1 <span style="color:blue">-&gt;</span> x = Seq.index (as_seq m0 b) i)</code></pre></li>
+<li class="li ul-li list-star-li loose-li" data-line="183">
+<p data-line="183"><span data-line="183"></span>This spec does not say anything about contents of <span data-line="183"></span>&#160;<span data-line="183"></span> <span data-line="183"></span><code class="code code1 language-fstarlang lang-fstarlang fstarlang colorized">b</code><span data-line="183"></span> <span data-line="183"></span>&#160;<span data-line="183"></span> (or any other buffer for that matter) in <span data-line="183"></span>&#160;<span data-line="183"></span> <span data-line="183"></span><code class="code code1 language-fstarlang lang-fstarlang fstarlang colorized">m1</code><span data-line="183"></span>
+</p>
+<pre class="para-block pre-fenced pre-fenced3 language-fstarlang lang-fstarlang fstarlang colorized" data-line="184" data-line-first="185" style="display:block"><code data-line="185"><span style="color:blue">let</span> client (b:buffer u32) =
+  <span style="color:darkgreen">//say we know that Seq.index (as_seq m0 b) 0ul = 0ul</span>
+  <span style="color:blue">let</span> x = read b <span class="constant" style="color:purple">0</span>ul <span style="color:blue">in</span>
+  <span style="color:darkgreen">//now we can&#39;t prove that Seq.index (as_seq m1 b) 0ul = 0ul</span></code></pre></li>
+<li class="li ul-li list-star-li loose-li fragment" data-line="191">
+<p data-line="191"><span data-line="191"></span>Use <span data-line="191"></span>&#160;<span data-line="191"></span> <span data-line="191"></span><code class="code code1 language-fstarlang lang-fstarlang fstarlang colorized">modifies</code><span data-line="191"></span> theory
+</p>
+<pre class="para-block pre-fenced pre-fenced3 language-fstarlang lang-fstarlang fstarlang colorized" data-line="192" data-line-first="193" style="display:block"><code data-line="193"><span style="color:blue">val</span> read (#a:<span style="color:blue">Type</span>) (b:buffer a) (i:u32) : <span style="color:blue">Stack</span> a
+  (<span style="color:blue">requires</span> <span style="color:blue">fun</span> m <span style="color:blue">-&gt;</span> live m b /\ v i &lt; length b)  <span style="color:darkgreen">(*</span><span style="color:darkgreen"> Temporal and spatial memory safety </span><span style="color:darkgreen">*)</span>
+  (<span style="color:blue">ensures</span> <span style="color:blue">fun</span> m0 x m1 <span style="color:blue">-&gt;</span> x = Seq.index (as_seq m0 b) i /\ m0 == m1)  <span style="color:darkgreen">(*</span><span style="color:darkgreen"> NOTE </span><span style="color:darkgreen">*)</span>
+
+<span style="color:blue">val</span> upd (#a:<span style="color:blue">Type</span>) (b:buffer a) (i:u32) (v:a) : <span style="color:blue">Stack</span> unit
+  (<span style="color:blue">requires</span> <span style="color:blue">fun</span> m <span style="color:blue">-&gt;</span> live m b /\ v i &lt; length b)
+  (<span style="color:blue">ensures</span> <span style="color:blue">fun</span> m0 _ m1 <span style="color:blue">-&gt;</span> as_seq m1 b == Seq.upd (as_seq m0 b) i v /\ modifies1 b m0 m1)</code></pre></li></ul>
+<!------------------------------------------------------------------------------>
+
+
+</section>
+<section id="sec-dynamic-framing-using-nbsp-modifies-nbsp-with-nbsp-disjoint" class="section section2" data-section-depth="2" data-line="204"><h3 id="heading-sec-dynamic-framing-using-nbsp-modifies-nbsp-with-nbsp-disjoint" class="h2" data-heading-depth="2" style="display:block">Dynamic framing using &#160; <code class="code code1 language-fstarlang lang-fstarlang fstarlang colorized">modifies</code> &#160;, with &#160; <code class="code code1 language-fstarlang lang-fstarlang fstarlang colorized">disjoint</code></h3>
+<ul class="ul list-star loose" data-line="206">
+<li class="li ul-li list-star-li loose-li" data-line="206">
+<pre class="para-block pre-fenced pre-fenced3 language-fstarlang lang-fstarlang fstarlang colorized" data-line="206" data-line-first="207" style="display:block"><code data-line="207"><span style="color:blue">let</span> client (b0 b1:buffer u32) =
+  <span style="color:darkgreen">//say we know that Seq.index (as_seq m0 b2) 0ul = 0ul</span>
+  upd b1 <span class="constant" style="color:purple">0</span>ul <span class="constant" style="color:purple">1</span>ul;
+  <span style="color:darkgreen">//cannot prove that Seq.index (as_seq m1 b2) 0ul = 0ul</span>
+  <span style="color:darkgreen">//why?</span></code></pre></li>
+<li class="li ul-li list-star-li loose-li fragment" data-line="214">
+<p data-line="214"><span data-line="214"></span>Need an anti-aliasing precondition
+</p>
+<pre class="para-block pre-fenced pre-fenced3 language-fstarlang lang-fstarlang fstarlang colorized" data-line="215" data-line-first="216" style="display:block"><code data-line="216"><span style="color:blue">val</span> disjoint (#a #b:<span style="color:blue">Type</span>) (b1:buffer a) (b2:buffer b) : prop</code></pre></li>
+<li class="li ul-li list-star-li loose-li fragment" data-line="219">
+<p data-line="219"><span data-line="219"></span>If we know <span data-line="219"></span>&#160;<span data-line="219"></span> <span data-line="219"></span><code class="code code1 language-fstarlang lang-fstarlang fstarlang colorized">disjoint b1 b2</code><span data-line="219"></span> <span data-line="219"></span>&#160;<span data-line="219"></span> then the proof above would go through
+</p></li></ul>
+<!------------------------------------------------------------------------------>
+
+
+</section>
+<section id="sec-low----first-order-code-higher-order-proofs-for-c-programs" class="section section2" data-section-depth="2" data-line="223"><h3 id="heading-sec-low----first-order-code-higher-order-proofs-for-c-programs" class="h2" data-heading-depth="2" style="display:block">Low* - First-order code, higher-order proofs for C programs!</h3>
+<ul class="ul list-star loose" data-line="225">
+<li class="li ul-li list-star-li loose-li" data-line="225">
+<p data-line="225"><span data-line="225"></span>First-order code written using these libraries can be extracted to C using Kremlin
+</p></li>
+<li class="li ul-li list-star-li loose-li fragment" data-line="227">
+<p data-line="227"><span data-line="227"></span>Proofs and specifications are erased
+</p></li>
+<li class="li ul-li list-star-li loose-li fragment" data-line="229">
+<p data-line="229"><span data-line="229"></span>Library types and APIs are mapped to corresponding C constructs
+</p>
+<pre class="para-block pre-fenced pre-fenced3 language-fstarlang lang-fstarlang fstarlang colorized" data-line="230" data-line-first="231" style="display:block"><code data-line="231">             u32 -- uint32_t
+ Buffer.read b i -- b[i]
+Buffer.upd b i v -- b[i] = v
+...</code></pre></li>
+<li class="li ul-li list-star-li loose-li fragment" data-line="237">
+<p data-line="237"><span data-line="237"></span>The C code is portable, efficient (no run-time checks), and readable
+</p></li>
+<li class="li ul-li list-star-li loose-li fragment" data-line="239">
+<p data-line="239"><span data-line="239"></span>Metatheory (ICFP<span data-line="239"></span>&#39;<span data-line="239"></span>17) guarantees that it is safe and satisfies the postconditions proven in Low<span data-line="239"></span>*<span data-line="239"></span>
+</p></li></ul>
+<!------------------------------------------------------------------------------>
+
+
+</section>
+<section id="sec-constant-time-integers---side-channel-resistance-via-abstraction" class="section section2" data-section-depth="2" data-line="243"><h3 id="heading-sec-constant-time-integers---side-channel-resistance-via-abstraction" class="h2" data-heading-depth="2" style="display:block">Constant-time integers : side-channel resistance via abstraction</h3>
+<ul class="ul list-star loose" data-line="245">
+<li class="li ul-li list-star-li loose-li" data-line="245">
+<p data-line="245"><span data-line="245"></span>Branching on secret keys or using secret data as indices may result in side-channel attacks
+</p>
+<ul class="ul list-dash compact" data-line="246">
+<li class="li ul-li list-dash-li compact-li" data-line="246"><span data-line="246"></span>Attacker may observe the timing or memory access patterns
+</li></ul>
+</li>
+<li class="li ul-li list-star-li loose-li fragment" data-line="248">
+<p data-line="248"><span data-line="248"></span>Key idea : Export the secret integer types as an abstract type
+</p></li>
+<li class="li ul-li list-star-li loose-li fragment" data-line="250">
+<p data-line="250"><span data-line="250"></span>Constant time operations for equality checking, comparisons etc.
+</p>
+<ul class="ul list-dash compact" data-line="251">
+<li class="li ul-li list-dash-li compact-li" data-line="251"><span data-line="251"></span>Since the type is abstract, type-safety ensures that clients cannot branch on these or use them as array indices
+</li>
+<li class="li ul-li list-dash-li compact-li" data-line="252"><span data-line="252"></span>See ICFP<span data-line="252"></span>&#39;<span data-line="252"></span>17 paper for metatheory
+</li></ul>
+</li>
+<li class="li ul-li list-star-li loose-li fragment" data-line="254">
+<p data-line="254"><span data-line="254"></span>All HACL<span data-line="254"></span>*<span data-line="254"></span> algorithms use constant-time integers
+</p></li></ul></section></div></div><span data-line=""></span></div>
+</body>
+<script>
+    // initialize printing
+    revealConfig.initPrint();
+    // initialize background embedded images
+    revealConfig.getEmbeddedImages();
+    </script>
+</html>
