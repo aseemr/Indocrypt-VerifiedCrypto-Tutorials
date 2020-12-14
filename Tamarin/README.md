@@ -1,8 +1,6 @@
 # Tamarin
 
-## Learning more about Tamarin
-
-Tamarin has extensive documentation, theory and case study papers, teaching materials, and an active mailing list. Find out everything at the [Tamarin website](https://tamarin-prover.github.io/)!
+**Tamarin has extensive documentation, theory and case study papers, teaching materials, and an active mailing list. Find out everything at the [Tamarin website](https://tamarin-prover.github.io/)!**
 
 ## Running Tamarin
 
