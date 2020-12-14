@@ -173,18 +173,33 @@ module M = {
     return (state);
   }
   
+  proc addRoundKey (state:W128.t, rk:W128.t) : W128.t = {
+    var aux: W128.t;
+    
+    
+    
+    leakages <- LeakAddr([]) :: leakages;
+    aux <- (state `^` rk);
+    state <- aux;
+    return (state);
+  }
+  
   proc invaes_rounds (rkeys:W128.t Array11.t, in_0:W128.t) : W128.t = {
     var aux_0: int;
     var aux: W128.t;
     
     var state:W128.t;
+    var rk:W128.t;
     var round:int;
     
     leakages <- LeakAddr([]) :: leakages;
     aux <- in_0;
     state <- aux;
     leakages <- LeakAddr([10]) :: leakages;
-    aux <- (state `^` rkeys.[10]);
+    aux <- rkeys.[10];
+    rk <- aux;
+    leakages <- LeakAddr([]) :: leakages;
+    aux <@ addRoundKey (state, rk);
     state <- aux;
     leakages <- LeakFor(0,9) :: LeakAddr([]) :: leakages;
     round <- 0;

@@ -43,6 +43,11 @@ realize xor_idempotent2 by smt(@W128).
 import RefinedScheme.
 import PRFth.
 
+(*
+print Scheme.
+print indcpa_security.
+*)
+
 (* Our library for AES includes a proof that extracted Jasmin code
    for the AES function (AES_jass.M, which calls the AES-NI instructions) is
    computing the aes operator that defines our reference AES 
@@ -54,7 +59,7 @@ equiv aes_correct_E :
   NbAESEnc_jazz.M.aes ~ AES_jazz.M.aes :
     ={arg} ==> ={res} by sim.
 
-phoare aes_correct k n : [M.aes : arg = (k,n) ==> res  = aes k n] = 1%r.
+phoare aes_correct k n : [NbAESEnc_jazz.M.aes : arg = (k,n) ==> res  = aes k n] = 1%r.
 proof. conseq aes_correct_E (aes_jazz k n) => /#. qed.
 
 (* With the above results as helpers, we can prove that our
@@ -89,9 +94,9 @@ qed.
 
 phoare dec_correct _k _n _c : 
  [ NbAESEnc_jazz.M.dec :
-    arg = (_k,_n,_c) ==> res = enc _k _n _c ] = 1%r.
+    arg = (_k,_n,_c) ==> res = dec _k _n _c ] = 1%r.
 proof. 
-  conseq (dec_correct_equiv) (correct_dec _k _n _c) => /#. 
+  conseq (dec_correct_equiv) (correct_dec _k _n _c)  => /#. 
 qed.
 
 (* These results show each of our Jasmin procedures 
@@ -114,6 +119,7 @@ module ConcreteScheme = {
 
 lemma concrete_correctness &m (_k _n _p : W128.t):
     Pr[Correctness(ConcreteScheme).main(_k, _n, _p) @ &m : res] = 1%r.
+proof.
 rewrite (_: 1%r = Pr[Correctness(Scheme).main(_k, _n, _p) @ &m : res]); 
    first by rewrite -(correctness &m _k _n _p).
 byequiv; last 2 by done.
@@ -157,7 +163,7 @@ do split.
        last by apply adv.
   byequiv; last 2 by done.
   proc.
-  call(_: ={RealScheme.k,CPA.nonces}); last by inline *; auto => />.
+  call(_: ={RealScheme.k,WO.nonces}); last by inline *; auto => />.
   proc. 
   sp; if; 1,3: by auto.
   wp;call(_: ={RealScheme.k}); last by auto.
@@ -169,7 +175,7 @@ do split.
        last by apply countr.
   byequiv; last 2 by done.
   proc.
-  call(_: ={RealScheme.k,CPA.nonces,QCounter.q}); last by inline *; auto => />.
+  call(_: ={RealScheme.k,WO.nonces,QCounter.q}); last by inline *; auto => />.
   proc. 
   sp; if; 1,3: by auto.
   wp;call(_: ={RealScheme.k,QCounter.q}); last by auto.

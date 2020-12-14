@@ -1,0 +1,91 @@
+
+.reveal {
+  font-size: 38px;
+}
+
+.reveal h1, .reveal h2, .reveal h3, .reveal h4, .reveal h5, .reveal h6 {
+  text-transform: none;
+}
+
+.reveal pre code {
+  background: #FFFFFF; 
+  color: #000000;
+}
+
+.reveal .console pre {
+  background: #000000;
+}
+.reveal .console pre code {
+  background: #000000;
+  color: #FFFFFF;
+  font-weight: bold;
+}
+
+.madoko .reveal pre {
+  width: 42em;
+}
+
+.madoko .reveal li {
+  width: 30em;
+}
+
+.madoko p {
+  text-align: center;
+  /* width: 30em;   */
+}
+
+.madoko .reveal h1 {
+    font-size: 2em;
+}
+.madoko .reveal h2 {
+    font-size: 1.6em;
+}
+
+.madoko .reveal pre {
+  font-size: 0.65em;
+}
+
+.reveal pre code {
+  max-height: none;
+}
+
+/* this doesn't work for the logo */
+body {
+  background-size: 50%;
+  background-image: url("../img/fstar.png");
+  background-position: left top;
+  background-repeat: no-repeat;
+}
+
+/* smaller inner bullets */
+/* madoko tries to do this too for things with .madoko class,
+   but then generates things without that class */
+
+ul.list-dash {
+    font-size: 0.8em;
+}
+
+/* This part is for fighting with display problems */
+
+/* Trying to fix useless line breaks in Chrome
+.madoko li {
+  text-align: left; -- this don't solve it
+}
+*/
+
+/* Trying to get zooming in to work;
+   it seems that the max-width definition in presentation.mdx is the culprit
+body.madoko {
+  width: 100%;
+}
+*/
+
+/* overriding white.css in reveal to make the program verification table great again */
+
+.reveal table th, .reveal table td {
+  border-bottom: none;
+}
+
+.under {
+  text-decoration: underline;
+}

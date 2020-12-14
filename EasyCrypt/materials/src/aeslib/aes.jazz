@@ -69,16 +69,11 @@ inline fn keys_expand_inv(reg u128 key) -> reg u128[11] {
   return rkeys;    
 } 
 
-inline fn AddRoundKey(reg u128 state, reg u128 rk) -> reg u128 {
-   state = state ^ rk;
-   return state;
-}
-
 inline fn aes_rounds (reg u128[11] rkeys, reg u128 in) -> reg u128 {
   reg u128 state;
   inline int round;
   state = in;
-  state ^= rkeys[0]; // Reg alloc problem AddRoundKey(state, rkeys[0]);
+  state ^= rkeys[0]; 
   for round = 1 to 10 { 
     state = #AESENC(state, rkeys[round]);
   }
@@ -86,11 +81,18 @@ inline fn aes_rounds (reg u128[11] rkeys, reg u128 in) -> reg u128 {
   return state; 
 }
 
+inline fn AddRoundKey(reg u128 state, stack u128 rk) -> reg u128 {
+   state = state ^ rk;
+   return state;
+}
+
 inline fn invaes_rounds (reg u128[11] rkeys, reg u128 in) -> reg u128 {
   reg u128 state;
   inline int round;
+  stack u128 rk;
   state = in;
-  state ^= rkeys[10]; // Reg alloc problem AddRoundKey(state, rkeys[10]);
+  rk = rkeys[10];
+  state = AddRoundKey(state,rk); 
   for round = 9 downto 0 { 
     state = #AESDEC(state, rkeys[round]);
   }

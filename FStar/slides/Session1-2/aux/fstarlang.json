@@ -1,0 +1,99 @@
+{
+  "displayName": "F*",
+  "name": "fstarlang",
+  "mimeTypes": ["text/fstarlang"],
+  "fileExtensions": ["fst","fsti"],
+  
+  "editorOptions": { "tabSize": 2, "insertSpaces": true },
+
+  "lineComment":      "//",   
+  "blockCommentStart": "(*",
+  "blockCommentEnd":   "*)",
+
+  "keywords": [
+    "and", "assert", "assume", "begin",
+    "effect", "else", "end", "ensures", "exception", "exists", 
+    "false", "forall", "fun", "function", "if", "in", 
+    "let", "match", "module",
+    "of", "open", "private", "rec", "requires", 
+    "then", "to", "true", "try", "type", "val", "when", 
+    "with", "Type", "CompType",
+    "Lemma", "Tot", "Pure", "ST", "decreases", "Div", 
+    "ST_EXN", "ST_EXN_DIV", "IO_ST_EX", "STDiv", "St", "Exn", "StExn",
+    "noeq", "Dv", "total", "new_effect", "STATE", "STEXN", "STATE_STEXN",
+    "reify", "reflect", "PURE", "DIV", "Ghost",
+    "reifiable", "reflectable", "abstract", "Type0", "GTot",
+    "Stack"  
+  ],
+
+
+  "escapes" :  "\\\\(?:[nrt\\\\\"'\\?]|x[0-9a-fA-F]{2}|u[0-9a-fA-F]{4}|U[0-9a-fA-F]{6})",
+  "symbols0": "[\\$%&\\*\\+@!\\/\\\\\\^~=\\.:\\-\\?]",
+  "symbols" : "(?:@symbols0|[\\|<>])+",
+  "idchars" : "[\\w']*", 
+
+  "tokenizer": {
+    "root": [
+      ["((?:[a-z]@idchars\\/)+)([a-z]@idchars)", ["identifier.namespace","identifier"]],
+      
+      ["[A-Za-z]@idchars(?!\\/)", 
+        { "cases":{ "@keywords": { 
+                    "cases": { "@default": "keyword" } 
+                  },
+                  "@default" : "identifier" }
+        }
+      ],
+           
+      ["[A-Z]@idchars", "identifier.constructor" ],
+
+      ["_@idchars", "identifier.wildcard"],
+      ["([a-z]@idchars\\/)+", "identifier.namespace" ],
+      { "include": "@whitespace" },
+      
+      ["[{}()\\[\\]]", "@brackets"],
+      ["[;,`]", "delimiter"],
+      ["[<>](?![<>|]*@symbols0)", "@brackets" ],
+      ["->(?!@symbols0|[>\\|])", "keyword" ],
+      ["@\"", { "token": "string.quote", "bracket": "@open", "next": "@litstring" } ],
+      ["@symbols", { "cases": { "\\-": "operator.minus",
+                              "@keywords": "keyword.operator",
+                              "@default": "operator" }}
+      ],
+      ["[0-9]+\\.[0-9]+([eE][\\-+]?[0-9]+)?", "number.float"],
+      ["0[xX][0-9a-fA-F]+", "number.hex"],
+      ["[0-9]+", "number"],
+      ["\"([^\"\\\\]|\\\\.)*$", "string.invalid" ],  
+      ["\"",  { "token": "string.quote", "bracket": "@open", "next": "@string" } ],
+      ["'[^\\\\']'", "string"],
+      ["(')(@escapes)(')", ["string","string.escape","string"]],
+      ["'", "string.invalid"],
+      ["^[ ]*#.*", "namespace"]
+    ],
+
+    "whitespace": [
+      ["[ \\r\\n]+", "white"],
+      ["\\(\\*", "comment", "@comment" ],
+      ["//.*", "comment" ]
+    ],
+
+    "comment": [
+      ["[^\\(\\*]+", "comment" ],
+      ["\\(\\*",  "comment", "@push" ],
+      ["\\*\\)",  "comment", "@pop"  ],
+      ["[\\(\\*]", "comment"]
+    ],  
+
+    "string": [
+      ["[^\\\\\"]+",  "string"],
+      ["@escapes", "string.escape"],
+      ["\\\\.",      "string.escape.invalid"],
+      ["\"",        { "token": "string.quote", "bracket": "@close", "next": "@pop" } ]
+    ],
+
+    "litstring": [
+      ["[^\"]+",    "string"],
+      ["\"\"",       "string.escape"],
+      ["\"",        { "token": "string.quote", "bracket": "@close", "next": "@pop" } ]
+    ]
+  }
+}

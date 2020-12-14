@@ -1,6 +1,6 @@
 #### Adapted from https://fstarlang.github.io/lowstar/html/Setup.html ####
 
-SOURCE_DIRS = .
+SOURCE_DIRS = . gimli example-poly
 
 # We want our source tree on the include path, along with pre-built ulib and
 # kremlib so that F* can reuse these build artifacts rather than reverify F* and
@@ -52,6 +52,11 @@ endif
 
 # all: dist/libbignum.a
 all: dist/libvericrypt.a
+
+dist/gimli-test.exe: gimli/gimli-test.o dist/libvericrypt.a
+
+%.exe:
+	$(CC) $(CFLAGS) $^ -o $@
 
 # test: tests/c-tests.test obj/specs-test.test
 
@@ -242,6 +247,9 @@ dist/Makefile.basic: $(filter-out %prims.krml,$(ALL_KRML_FILES))
 	  -fparentheses \
           -bundle FStar.*,LowStar.*,Prims \
 	  -bundle 'Lib.*' \
+	  -no-prefix 'Hacl.Impl.Gimli' \
+	  -bundle Hacl.Impl.Gimli=Spec.Gimli \
+	  -bundle Hacl.Impl.Poly=Spec.Poly,Hacl.Spec.*,Hacl.Impl.Poly.Field \
 	  -o libvericrypt.a
 
 # Compiling the generated C code

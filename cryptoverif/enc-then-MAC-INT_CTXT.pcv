@@ -1,0 +1,73 @@
+(* WARNING: This file uses the so-called "channel" front-end syntax,
+   which is not the one presented in the tutorial. 
+   The file presented in the tutorial is enc-then-MAC-INT_CTXT.ocv.
+   
+   The syntax used in this file is meant to be compatible with ProVerif.
+
+Encrypt-then-MAC is INT-CTXT *)
+
+param nEnc, nDec.
+
+type mkey [bounded].
+type key [fixed].
+type macs [bounded].
+
+(* Shared-key encryption (CPA Stream cipher) *)
+
+proba Penc.
+
+expand IND_CPA_sym_enc(key, bitstring, bitstring, enc, dec, injbot, Z, Penc).
+
+(* Mac *)
+
+proba Pmac.
+
+expand SUF_CMA_proba_mac(mkey, bitstring, macs, mac, verify, Pmac).
+
+(* Queries *)
+
+event bad.
+query event(bad) ==> false.
+
+fun concat(bitstring, macs): bitstring [data].
+
+letfun full_enc(m: bitstring, k: key, mk: mkey) =
+  c1 <- enc(m,k);
+  concat(c1,mac(c1,mk)).
+
+letfun full_dec(c: bitstring, k: key, mk: mkey) =
+  let concat(c1, mac1) = c in
+  (
+     if verify(c1, mk, mac1) then
+        dec(c1, k)
+     else
+        bottom
+  )
+  else
+     bottom.
+
+table ciphertexts(bitstring).
+
+channel cEnc, cDec, start, c.
+
+let QdecTest(k: key, mk: mkey) =
+        ! iDec <= nDec
+        in(cDec, c: bitstring);
+	get ciphertexts(=c) in out(cDec, true) else
+	if full_dec(c, k, mk) <> bottom
+	then event bad; out(cDec, true)
+	else out(cDec, false).
+
+let Qenc(k: key, mk: mkey) = 
+        ! iEnc <= nEnc
+	in(cEnc, m0: bitstring);
+	c0 <- full_enc(m0,k,mk);
+	insert ciphertexts(c0);
+	out(cEnc, c0).
+
+process 
+	in(start, ());
+	new k: key;
+	new mk: mkey;
+	out(c, ());
+	(Qenc(k,mk) | QdecTest(k,mk))

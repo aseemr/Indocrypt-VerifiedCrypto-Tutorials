@@ -3,8 +3,6 @@
 require import AllCore Distr List.
 require import QCounter.
 
-theory NbEnc.
-
 (* Types for algorithm inputs and outputs *)
 type key.
 type nonce.
@@ -82,29 +80,37 @@ module IdealScheme : OrclCPAi = {
   }
 }.
 
+(* We define a wrapper that enforces the nonce-respecting
+   condition. It refuses to call the actual encryption oracle
+   if the nonce is repeated. *)
+module WO(O : OrclCPAi) : OrclCPA = {
+  var nonces : nonce list
+
+  proc init() = {
+    O.init();
+    nonces <- [];
+  }
+
+  proc enc(n:nonce, p:plaintext) = {
+    var c;
+    c <- witness;
+    if (!n \in nonces) {
+      c <@ O.enc(n,p);
+      nonces <- n::nonces;
+    }
+    return c;
+  }
+}.
+
 (* The security game only calls oracles if nonces do not
    repeat. It is parametrised by one of the real or ideal
    schemes.  *)
 module CPA(A:AdvCPA) (O:OrclCPAi) = {
-  var nonces : nonce list
-
-  module WO : OrclCPA = {
-    proc enc(n:nonce, p:plaintext) = {
-      var c;
-      c <- witness;
-      if (!n \in nonces) {
-        c <@ O.enc(n,p);
-        nonces <- n::nonces;
-      }
-      return c;
-    }
-  }
 
   proc main() = {
     var b;
-    nonces <- [];
-    O.init();
-    b <@ A(WO).main();
+    WO(O).init();
+    b <@ A(WO(O)).main();
     return b;
   }
 }.
@@ -115,5 +121,3 @@ module CPA(A:AdvCPA) (O:OrclCPAi) = {
               Pr[CPA(A,IdealScheme).main() @ &m : res ]|
 
 *)
-
-end NbEnc.
